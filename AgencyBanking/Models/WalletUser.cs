@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
+#nullable disable
 
 namespace AgencyBanking.Models
 {
-    public class CreateWalletRequest
+    public partial class WalletUser
     {
         public string Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string UserName { get; set; }
-        public string Password { get; set; }
+        public byte[] PasswordHash { get; set; }
+        public byte[] PasswordSalt { get; set; }
         public string EmailAddress { get; set; }
         public string PhoneNumber { get; set; }
         public string Gender { get; set; }

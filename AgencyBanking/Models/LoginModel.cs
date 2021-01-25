@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace AgencyBanking.Models
 {
-    public class CustomerLoginRequest
+    public class LoginModel
     {
-        public string SMUsername { get; set; }
-        public string SMPassword { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
         public int appversion { get; set; }
         public string LoginMethod { get; set; }
         public LogDetails logDetails { get; set; }
