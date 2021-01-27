@@ -17,6 +17,7 @@ namespace AgencyBanking.Models
         {
         }
 
+        public virtual DbSet<ApiLogItem> ApiLogItems { get; set; }
         public virtual DbSet<WalletUser> WalletUsers { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -24,13 +25,24 @@ namespace AgencyBanking.Models
             if (!optionsBuilder.IsConfigured)
             {
 //warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=.\\SQLExpress;Database=AgencyBanking;Trusted_Connection=True;");
+               // optionsBuilder.UseSqlServer("Server=.\\SQLExpress;Database=AgencyBanking;Trusted_Connection=True;");
+                   optionsBuilder.UseSqlServer("Server=tcp:kmndb.database.windows.net,1433;Initial Catalog=AgencyBanking;Persist Security Info=False;User ID=kmnadmin;Password=Okot@2020KMN;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Trusted_Connection=True;");
+
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
+
+            modelBuilder.Entity<ApiLogItem>(entity =>
+            {
+                entity.ToTable("ApiLogItem");
+
+                entity.Property(e => e.Method).HasMaxLength(100);
+
+                entity.Property(e => e.ResponseMillis).HasColumnType("decimal(18, 0)");
+            });
 
             modelBuilder.Entity<WalletUser>(entity =>
             {
@@ -61,8 +73,6 @@ namespace AgencyBanking.Models
                 entity.Property(e => e.LastName).HasMaxLength(50);
 
                 entity.Property(e => e.Referralcode).HasMaxLength(50);
-
-                entity.Property(e => e.CurrencyCode).HasMaxLength(50);
 
                 entity.Property(e => e.Transactionpin).HasMaxLength(10);
 

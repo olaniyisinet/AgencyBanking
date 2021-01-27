@@ -24,6 +24,5 @@ namespace AgencyBanking.Models
         public string Devicemodel { get; set; }
         public string Ipaddress { get; set; }
         public string Referralcode { get; set; }
-        public string CurrencyCode { get; set; }
     }
 }
