@@ -18,16 +18,19 @@ namespace AgencyBanking.Models
         }
 
         public virtual DbSet<ApiLogItem> ApiLogItems { get; set; }
+        public virtual DbSet<Beneficiary> Beneficiaries { get; set; }
+        public virtual DbSet<CustomerAccountSchema> CustomerAccountSchemas { get; set; }
+        public virtual DbSet<CustomerProfile> CustomerProfiles { get; set; }
+        public virtual DbSet<WalletInfo> WalletInfos { get; set; }
         public virtual DbSet<WalletUser> WalletUsers { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-//warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-               // optionsBuilder.UseSqlServer("Server=.\\SQLExpress;Database=AgencyBanking;Trusted_Connection=True;");
-                   optionsBuilder.UseSqlServer("Server=tcp:kmndb.database.windows.net,1433;Initial Catalog=AgencyBanking;Persist Security Info=False;User ID=kmnadmin;Password=Okot@2020KMN;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Trusted_Connection=True;");
-
+                //warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                //  optionsBuilder.UseSqlServer("Server=.\\SQLExpress;Database=AgencyBanking;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer("Server=tcp:kmndb.database.windows.net,1433;Initial Catalog=AgencyBanking;Persist Security Info=False;User ID=kmnadmin;Password=Okot@2020KMN;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Trusted_Connection=True;");
             }
         }
 
@@ -42,6 +45,140 @@ namespace AgencyBanking.Models
                 entity.Property(e => e.Method).HasMaxLength(100);
 
                 entity.Property(e => e.ResponseMillis).HasColumnType("decimal(18, 0)");
+            });
+
+            modelBuilder.Entity<Beneficiary>(entity =>
+            {
+                entity.ToTable("Beneficiary");
+
+                entity.Property(e => e.BeneficiaryAccountName).HasMaxLength(50);
+
+                entity.Property(e => e.BeneficiaryAccountNumber).HasMaxLength(50);
+
+                entity.Property(e => e.BeneficiaryBankCode).HasMaxLength(20);
+
+                entity.Property(e => e.BeneficiaryBankName).HasMaxLength(50);
+
+                entity.Property(e => e.DateCreated).HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.UserId).HasMaxLength(50);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Beneficiaries)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_Beneficiary_WalletUsers");
+            });
+
+            modelBuilder.Entity<CustomerAccountSchema>(entity =>
+            {
+                entity.ToTable(" CustomerAccountSchema");
+
+                entity.Property(e => e.AccountGroup).HasMaxLength(50);
+
+                entity.Property(e => e.AccountNumber).HasMaxLength(50);
+
+                entity.Property(e => e.AccountType).HasMaxLength(50);
+
+                entity.Property(e => e.Currency)
+                    .IsRequired()
+                    .HasMaxLength(10);
+
+                entity.Property(e => e.Name).HasMaxLength(50);
+
+                entity.Property(e => e.UserId).HasMaxLength(50);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.CustomerAccountSchemas)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_CustomerAccount_WalletUsers");
+            });
+
+            modelBuilder.Entity<CustomerProfile>(entity =>
+            {
+                entity.HasKey(e => e.CustomerId);
+
+                entity.ToTable("CustomerProfile");
+
+                entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
+
+                entity.Property(e => e.Address).HasMaxLength(50);
+
+                entity.Property(e => e.AgentCode).HasMaxLength(50);
+
+                entity.Property(e => e.Bvn)
+                    .HasMaxLength(50)
+                    .HasColumnName("BVN");
+
+                entity.Property(e => e.Email).HasMaxLength(50);
+
+                entity.Property(e => e.Fullname).HasMaxLength(100);
+
+                entity.Property(e => e.LastLogin).HasMaxLength(50);
+
+                entity.Property(e => e.PhoneNumber).HasMaxLength(50);
+
+                entity.Property(e => e.PryAccount).HasMaxLength(50);
+
+                entity.Property(e => e.ReferralCode).HasMaxLength(50);
+
+                entity.Property(e => e.RmdaoCode)
+                    .HasMaxLength(50)
+                    .HasColumnName("RMDaoCode");
+
+                entity.Property(e => e.Rmemail)
+                    .HasMaxLength(50)
+                    .HasColumnName("RMEmail");
+
+                entity.Property(e => e.Rmmobile)
+                    .HasMaxLength(50)
+                    .HasColumnName("RMMobile");
+
+                entity.Property(e => e.Rmname)
+                    .HasMaxLength(50)
+                    .HasColumnName("RMName");
+
+                entity.Property(e => e.Smid)
+                    .HasMaxLength(50)
+                    .HasColumnName("SMID");
+
+                entity.Property(e => e.Username).HasMaxLength(50);
+
+                entity.HasOne(d => d.Sm)
+                    .WithMany(p => p.CustomerProfiles)
+                    .HasForeignKey(d => d.Smid)
+                    .HasConstraintName("FK_CustomerProfile_WalletUsers");
+            });
+
+            modelBuilder.Entity<WalletInfo>(entity =>
+            {
+                entity.ToTable("WalletInfo");
+
+                entity.Property(e => e.Currencycode)
+                    .HasMaxLength(10)
+                    .HasColumnName("CURRENCYCODE");
+
+                entity.Property(e => e.Customerid).HasMaxLength(50);
+
+                entity.Property(e => e.Email).HasMaxLength(50);
+
+                entity.Property(e => e.FirstName).HasMaxLength(50);
+
+                entity.Property(e => e.FullName).HasMaxLength(50);
+
+                entity.Property(e => e.Gender).HasMaxLength(10);
+
+                entity.Property(e => e.Lastname).HasMaxLength(50);
+
+                entity.Property(e => e.Mobile).HasMaxLength(50);
+
+                entity.Property(e => e.Nuban).HasMaxLength(50);
+
+                entity.Property(e => e.Phone).HasMaxLength(50);
+
+                entity.HasOne(d => d.Customer)
+                    .WithMany(p => p.WalletInfos)
+                    .HasForeignKey(d => d.Customerid)
+                    .HasConstraintName("FK_WalletInfo_WalletUsers");
             });
 
             modelBuilder.Entity<WalletUser>(entity =>

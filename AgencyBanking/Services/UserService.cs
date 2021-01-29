@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AgencyBanking.Helpers;
 using AgencyBanking.Models;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace AgencyBanking.Services
 {
@@ -39,7 +40,7 @@ namespace AgencyBanking.Services
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
                 return null;
 
-            var user = _context.WalletUsers.SingleOrDefault(x => x.UserName == username);
+            var user = _context.WalletUsers.Include(i => i.CustomerProfiles).Include(w => w.WalletInfos).SingleOrDefault(x => x.UserName == username);
 
             // check if username exists
             if (user == null)
@@ -50,7 +51,7 @@ namespace AgencyBanking.Services
                 return null;
 
             if (user.Deviceimei != DeviceIMEI)
-               throw new AppException("Device Not Registered");
+               throw new AppException("Device Not Registered with your profile");
 
             // authentication successful
             return user;
@@ -77,6 +78,50 @@ namespace AgencyBanking.Services
 
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
+
+            //create wallet info
+            var wallet = new WalletInfo
+            {
+                Customerid = user.Id,
+                FirstName = user.FirstName,
+                Lastname = user.LastName,
+                Email = user.EmailAddress,
+                Mobile = user.PhoneNumber,
+                Nuban = "",
+                Availablebalance = 0.00,
+                Phone = user.PhoneNumber,
+                Gender = user.Gender,
+                FullName = user.FirstName + " " + user.LastName,
+                Currencycode = "NGN"
+            };
+
+            var profile = new CustomerProfile
+            {
+                Username = user.UserName,
+                Email = user.EmailAddress,
+                Address = user.EmailAddress,
+                Bvn = "",
+                PhoneNumber = user.PhoneNumber,
+                Fullname = wallet.FullName,
+                QuestionCompleted = false,
+                DeviceInfoExist = false,
+                IsAgent = false,
+                HasPryAccount = false,
+                PryAccount = "",
+                ReferralCode = "",
+                IsWalletOnly = true,
+                AgentCode = "",
+                LastLogin = DateTime.UtcNow.ToString(),
+                DateOfBirth = user.DateOfBirth,
+                IsDefaultPassword = false,
+                RmdaoCode = "",
+                Rmname = "",
+                Rmemail = "",
+                Rmmobile = ""
+            };
+
+            user.WalletInfos.Add(wallet);
+            user.CustomerProfiles.Add(profile);
 
             _context.WalletUsers.Add(user);
             _context.SaveChanges();

@@ -18,7 +18,7 @@ namespace AgencyBanking.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("[controller]")]
+    [Route("/api")]
     public class WalletUsersController : ControllerBase
     {
         private IUserService _userService;
@@ -38,22 +38,36 @@ namespace AgencyBanking.Controllers
         public IActionResult OnboardWalletCustomer([FromBody] CreateWalletRequest model)
         {
             // map model to entity
-            model.Id = Guid.NewGuid().ToString();
             var walletuser = _mapper.Map<WalletUser>(model);
+            walletuser.Id = Guid.NewGuid().ToString();
             try
             {
                 // create user
-
                 var userCreated = _userService.Create(walletuser, model.Password);
                 if (_userService.isSuccessful)
                 {
+                
+                    var acctsummary = new CustomerAccountSummary
+                    {
+                        Accounts = new CustomerAccount { AccountInfo = walletuser.CustomerAccountSchemas.FirstOrDefault() },
+                        Beneficiaries = walletuser.Beneficiaries.FirstOrDefault()
+                    };
+
+                    var dashbaord = new CustomerDashboard
+                    {
+                        WalletInfo = walletuser.WalletInfos.FirstOrDefault(),
+                        ProfileInfo = walletuser.CustomerProfiles.FirstOrDefault(),
+                        AccountSummary = acctsummary
+                    };
+
                     return Ok(new ResponseModel2
                     {
-                        response = userCreated,
+                        response = dashbaord,
                         status = "true",
-                        code = "200",
+                        code = HttpContext.Response.StatusCode.ToString(),// "200",
                         message = "User registered successfully",
                     });
+
                 }
                 else
                 {
@@ -61,7 +75,7 @@ namespace AgencyBanking.Controllers
                     {
                         response = _userService.errorMessage,
                         status = "false",
-                        code = "200",
+                        code = HttpContext.Response.StatusCode.ToString(),
                         message = "User registeration failed",
                     });
                 }
@@ -73,7 +87,7 @@ namespace AgencyBanking.Controllers
                 {
                     response = ex.Message,
                     status = "false",
-                    code = "200",
+                    code = HttpContext.Response.StatusCode.ToString(),
                     message = "User registeration failed",
                 });
             }
@@ -92,7 +106,7 @@ namespace AgencyBanking.Controllers
                     {
                         response = "Login failed",
                         status = "false",
-                        code = "200",
+                        code = HttpContext.Response.StatusCode.ToString(),
                         message = "Invalid username or password",
                     });
 
@@ -110,14 +124,27 @@ namespace AgencyBanking.Controllers
 
                 var token = tokenHandler.CreateToken(tokenDescriptor);
                 var tokenString = tokenHandler.WriteToken(token);
-
-                  return Ok(new ResponseModel2
+                var acctsummary = new CustomerAccountSummary
                 {
-                    response = tokenString ,
+                    Accounts = new CustomerAccount { AccountInfo = user.CustomerAccountSchemas.FirstOrDefault() },
+                    Beneficiaries = user.Beneficiaries.FirstOrDefault()
+                };
+
+                var dashbaord = new CustomerDashboard
+                {
+                    WalletInfo = user.WalletInfos.FirstOrDefault(),
+                    ProfileInfo = user.CustomerProfiles.FirstOrDefault(),
+                    AccountSummary = acctsummary
+                };
+
+                return Ok(new LoginResponseModel
+                {
+                    token = tokenString,
+                    response = dashbaord,
                     status = "true",
-                    code = "200",
+                    code = HttpContext.Response.StatusCode.ToString(),
                     message = "Login successful",
-                });
+                }) ;
             }
             catch (Exception ex)
             {
@@ -125,7 +152,7 @@ namespace AgencyBanking.Controllers
                 {
                     response = ex.Message,
                     status = "false",
-                    code = "200",
+                    code = HttpContext.Response.StatusCode.ToString(),
                     message = "Login Failed",
                 });
             }

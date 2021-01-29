@@ -18,7 +18,15 @@ namespace AgencyBanking.Models
         public string code { get; set; }
         public string message { get; set; }
         public dynamic response { get; set; }
+    }
 
+    public class LoginResponseModel
+    {
+        public string status { get; set; }
+        public string code { get; set; }
+        public string message { get; set; }
+        public string token { get; set; }
+        public dynamic response { get; set; }
     }
 
 }
