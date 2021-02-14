@@ -76,7 +76,7 @@ namespace AgencyBanking.Controllers
                         response = _userService.errorMessage,
                         status = "false",
                         code = HttpContext.Response.StatusCode.ToString(),
-                        message = "User registeration failed",
+                        message = "User registeration failed. " + _userService.errorMessage,
                     });
                 }
 
@@ -88,7 +88,7 @@ namespace AgencyBanking.Controllers
                     response = ex.Message,
                     status = "false",
                     code = HttpContext.Response.StatusCode.ToString(),
-                    message = "User registeration failed",
+                    message = "User registeration failed. " + ex.Message,
                 });
             }
         }
@@ -153,7 +153,7 @@ namespace AgencyBanking.Controllers
                     response = ex.Message,
                     status = "false",
                     code = HttpContext.Response.StatusCode.ToString(),
-                    message = "Login Failed",
+                    message = "Login Failed. " + ex.Message
                 });
             }
 
