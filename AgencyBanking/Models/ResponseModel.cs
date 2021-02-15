@@ -91,7 +91,7 @@ namespace AgencyBanking.Models
         public DateTime? DateCreated { get; set; }
     }
 
-    public class CustomerAccountSchmeResponse
+    public class CustomerAccountSchemaResponse
     {
         public int Id { get; set; }
         public string UserId { get; set; }

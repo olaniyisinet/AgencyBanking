@@ -49,8 +49,8 @@ namespace AgencyBanking.Controllers
                 
                     var acctsummary = new CustomerAccountSummary
                     {
-                        Accounts = new CustomerAccount { AccountInfo = walletuser.CustomerAccountSchemas.FirstOrDefault() },
-                        Beneficiaries = walletuser.Beneficiaries.FirstOrDefault()
+                        Accounts = new CustomerAccount { AccountInfo = ExcludeNested.setAccounts(walletuser.CustomerAccountSchemas.ToList()) },
+                        Beneficiaries = ExcludeNested.setBeneficiary(walletuser.Beneficiaries.ToList())
                     };
 
                     var dashbaord = new CustomerDashboard
@@ -99,7 +99,7 @@ namespace AgencyBanking.Controllers
         {
             try
             {
-                var user = _userService.Authenticate(model.Username, model.Password, model.logDetails.DeviceIMEI);
+                var user = _userService.Authenticate(model.SMUsername, model.SMPassword, model.LogDetails.DeviceIMEI);
 
                 if (user == null)
                     return BadRequest(new ResponseModel2
@@ -126,8 +126,8 @@ namespace AgencyBanking.Controllers
                 var tokenString = tokenHandler.WriteToken(token);
                 var acctsummary = new CustomerAccountSummary
                 {
-                    Accounts = new CustomerAccount { AccountInfo = user.CustomerAccountSchemas.FirstOrDefault() },
-                    Beneficiaries = user.Beneficiaries.FirstOrDefault()
+                    Accounts = new CustomerAccount { AccountInfo = ExcludeNested.setAccounts( user.CustomerAccountSchemas.ToList()) },
+                    Beneficiaries = ExcludeNested.setBeneficiary( user.Beneficiaries.ToList())
                 };
 
                 var dashbaord = new CustomerDashboard

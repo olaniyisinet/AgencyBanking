@@ -57,9 +57,53 @@ namespace AgencyBanking.Helpers
             };
         }
 
-        public static BeneficiaryResponse setBeneficiary(WalletInfo wallet)
+        public static List<BeneficiaryResponse> setBeneficiary(List<Beneficiary> beneficiary)
         {
-            return new BeneficiaryResponse();
+            var Beneficiaries = new List<BeneficiaryResponse>();
+
+            if(beneficiary.Count > 0)
+            {
+                foreach (var ben in beneficiary)
+                {
+                    Beneficiaries.Add(new BeneficiaryResponse()
+                    {
+                        BeneficiaryId  = ben.BeneficiaryId,
+                        UserId = ben.UserId,
+                        BeneficiaryAccountNumber = ben.BeneficiaryAccountNumber,
+                        BeneficiaryAccountName = ben.BeneficiaryAccountName,
+                        BeneficiaryBankName = ben.BeneficiaryBankName,
+                        BeneficiaryBankCode = ben.BeneficiaryBankCode,
+                        DateCreated = ben.DateCreated
+    });
+                }
+            }
+
+            return Beneficiaries;
+        }
+
+        public static List<CustomerAccountSchemaResponse> setAccounts(List<CustomerAccountSchema> accountSchemas)
+        {
+            var Accounts = new List<CustomerAccountSchemaResponse>();
+
+            if (accountSchemas.Count > 0)
+            {
+                foreach (var act in accountSchemas)
+                {
+                    Accounts.Add(new CustomerAccountSchemaResponse()
+                    {
+                        Id = act.Id,
+                        UserId  = act.UserId,
+                        AccountGroup = act.AccountGroup,
+                        AccountType = act.AccountType,
+                        Name = act.Name,
+                        Balance = act.Balance,
+                        AccountNumber = act.AccountNumber,
+                        Currency = act.Currency
+    });
+                }
+            }
+
+            return Accounts;
         }
     }
 }
