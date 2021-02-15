@@ -140,7 +140,7 @@ namespace AgencyBanking.Controllers
                 return Ok(new LoginResponseModel
                 {
                     token = tokenString,
-                    response = dashbaord,
+                    Data = dashbaord,
                     status = "true",
                     code = HttpContext.Response.StatusCode.ToString(),
                     message = "Login successful",

@@ -26,7 +26,7 @@ namespace AgencyBanking.Models
         public string code { get; set; }
         public string message { get; set; }
         public string token { get; set; }
-        public dynamic response { get; set; }
+        public dynamic Data { get; set; }
     }
 
     public class QuestionResponse
