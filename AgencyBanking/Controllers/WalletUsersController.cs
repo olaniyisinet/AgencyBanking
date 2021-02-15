@@ -49,7 +49,7 @@ namespace AgencyBanking.Controllers
                 
                     var acctsummary = new CustomerAccountSummary
                     {
-                        Accounts = new CustomerAccount { AccountInfo = ExcludeNested.setAccounts(walletuser.CustomerAccountSchemas.ToList()) },
+                        Accounts =  ExcludeNested.setAccounts(walletuser.CustomerAccountSchemas.ToList()),
                         Beneficiaries = ExcludeNested.setBeneficiary(walletuser.Beneficiaries.ToList())
                     };
 
@@ -126,7 +126,8 @@ namespace AgencyBanking.Controllers
                 var tokenString = tokenHandler.WriteToken(token);
                 var acctsummary = new CustomerAccountSummary
                 {
-                    Accounts = new CustomerAccount { AccountInfo = ExcludeNested.setAccounts( user.CustomerAccountSchemas.ToList()) },
+                    // Accounts = new CustomerAccount { AccountInfo = ExcludeNested.setAccounts( user.CustomerAccountSchemas.ToList()) },
+                    Accounts = ExcludeNested.setAccounts(user.CustomerAccountSchemas.ToList()),
                     Beneficiaries = ExcludeNested.setBeneficiary( user.Beneficiaries.ToList())
                 };
 
@@ -139,7 +140,7 @@ namespace AgencyBanking.Controllers
 
                 return Ok(new LoginResponseModel
                 {
-                    token = tokenString,
+                  //  token = tokenString,
                     Data = dashbaord,
                     status = "true",
                     code = HttpContext.Response.StatusCode.ToString(),

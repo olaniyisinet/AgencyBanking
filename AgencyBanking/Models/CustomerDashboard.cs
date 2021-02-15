@@ -14,13 +14,13 @@ namespace AgencyBanking.Models
 
     public class CustomerAccountSummary
     {
-        public CustomerAccount Accounts  { get; set; }
+        public List<CustomerAccount> Accounts  { get; set; }
         public List<BeneficiaryResponse> Beneficiaries { get; set; }
     }
 
     public class CustomerAccount
     {
-        public List<CustomerAccountSchemaResponse> AccountInfo { get; set; }
+        public CustomerAccountSchemaResponse AccountInfo { get; set; }
     }
 
 }

@@ -81,15 +81,16 @@ namespace AgencyBanking.Helpers
             return Beneficiaries;
         }
 
-        public static List<CustomerAccountSchemaResponse> setAccounts(List<CustomerAccountSchema> accountSchemas)
+        public static List<CustomerAccount> setAccounts(List<CustomerAccountSchema> accountSchemas)
         {
-            var Accounts = new List<CustomerAccountSchemaResponse>();
+         //   var AccountInfo = new List<CustomerAccountSchemaResponse>();
+            var Accounts = new List<CustomerAccount>();
 
             if (accountSchemas.Count > 0)
             {
                 foreach (var act in accountSchemas)
                 {
-                    Accounts.Add(new CustomerAccountSchemaResponse()
+                    var customerAccount = new CustomerAccountSchemaResponse()
                     {
                         Id = act.Id,
                         UserId  = act.UserId,
@@ -99,7 +100,9 @@ namespace AgencyBanking.Helpers
                         Balance = act.Balance,
                         AccountNumber = act.AccountNumber,
                         Currency = act.Currency
-    });
+                    };
+
+                    Accounts.Add(new CustomerAccount() { AccountInfo = customerAccount });
                 }
             }
 
