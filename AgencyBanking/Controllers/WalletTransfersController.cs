@@ -22,7 +22,7 @@ namespace AgencyBanking.Controllers
 
         // POST: api/WalletTransfers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("WalletTransfar")]
+        [HttpPost("WalletTransfer")]
         public IActionResult WalletTransfer(WalletTransferRequest walletTransfer)
         {
             if(!VerifySenderBalance(walletTransfer.SMID, walletTransfer.amt))
