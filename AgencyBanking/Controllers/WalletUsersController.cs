@@ -62,7 +62,7 @@ namespace AgencyBanking.Controllers
 
                     return Ok(new ResponseModel2
                     {
-                        response = dashbaord,
+                        data = dashbaord,
                         status = "true",
                         code = HttpContext.Response.StatusCode.ToString(),// "200",
                         message = "User registered successfully",
@@ -73,7 +73,7 @@ namespace AgencyBanking.Controllers
                 {
                     return Ok(new ResponseModel2
                     {
-                        response = _userService.errorMessage,
+                        data = _userService.errorMessage,
                         status = "false",
                         code = HttpContext.Response.StatusCode.ToString(),
                         message = "User registeration failed. " + _userService.errorMessage,
@@ -85,7 +85,7 @@ namespace AgencyBanking.Controllers
             {
                 return Ok(new ResponseModel2
                 {
-                    response = ex.Message,
+                    data = ex.Message,
                     status = "false",
                     code = HttpContext.Response.StatusCode.ToString(),
                     message = "User registeration failed. " + ex.Message,
@@ -104,7 +104,7 @@ namespace AgencyBanking.Controllers
                 if (user == null)
                     return BadRequest(new ResponseModel2
                     {
-                        response = "Login failed",
+                        data = "Login failed",
                         status = "false",
                         code = HttpContext.Response.StatusCode.ToString(),
                         message = "Invalid username or password",
@@ -150,7 +150,7 @@ namespace AgencyBanking.Controllers
             {
                 return BadRequest(new ResponseModel2
                 {
-                    response = ex.Message,
+                    data = ex.Message,
                     status = "false",
                     code = HttpContext.Response.StatusCode.ToString(),
                     message = "Login Failed. " + ex.Message

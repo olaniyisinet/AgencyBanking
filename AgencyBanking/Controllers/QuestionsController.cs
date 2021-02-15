@@ -43,7 +43,7 @@ namespace AgencyBanking.Controllers
 
                 return Ok(new ResponseModel2
                 {
-                    response = Questrespones,
+                    data = Questrespones,
                     status = "true",
                     code = HttpContext.Response.StatusCode.ToString(),// "200",
                     message = "Questions returned successfully",
@@ -53,7 +53,7 @@ namespace AgencyBanking.Controllers
             {
                 return Ok(new ResponseModel2
                 {
-                    response = ex.Message,
+                    data = ex.Message,
                     status = "false",
                     code = HttpContext.Response.StatusCode.ToString(),// "200",
                     message = "Questions return failed",
@@ -94,7 +94,7 @@ namespace AgencyBanking.Controllers
 
             return Ok(new ResponseModel2
             {
-                response = "Successful",
+                data = "Successful",
                 status = "true",
                 code = HttpContext.Response.StatusCode.ToString(),
                 message = "User Questions Saved Successfully",
@@ -116,7 +116,7 @@ namespace AgencyBanking.Controllers
 
             return Ok(new ResponseModel2
             {
-                response = userQa,
+                data = userQa,
                 status = "true",
                 code = HttpContext.Response.StatusCode.ToString(),
                 message = "Successful",
