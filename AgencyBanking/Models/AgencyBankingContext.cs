@@ -21,9 +21,11 @@ namespace AgencyBanking.Models
         public virtual DbSet<Beneficiary> Beneficiaries { get; set; }
         public virtual DbSet<CustomerAccountSchema> CustomerAccountSchemas { get; set; }
         public virtual DbSet<CustomerProfile> CustomerProfiles { get; set; }
+        public virtual DbSet<Otp> Otps { get; set; }
         public virtual DbSet<Question> Questions { get; set; }
         public virtual DbSet<UserQa> UserQas { get; set; }
         public virtual DbSet<WalletInfo> WalletInfos { get; set; }
+        public virtual DbSet<WalletTransfer> WalletTransfers { get; set; }
         public virtual DbSet<WalletUser> WalletUsers { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -31,7 +33,7 @@ namespace AgencyBanking.Models
             if (!optionsBuilder.IsConfigured)
             {
                 //warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                //  optionsBuilder.UseSqlServer("Server=.\\SQLExpress;Database=AgencyBanking;Trusted_Connection=True;");
+                // optionsBuilder.UseSqlServer("Server=.\\SQLExpress;Database=AgencyBanking;Trusted_Connection=True;");
                 optionsBuilder.UseSqlServer("Server=tcp:kmndb.database.windows.net,1433;Initial Catalog=AgencyBanking;Persist Security Info=False;User ID=kmnadmin;Password=Okot@2020KMN;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Trusted_Connection=True;");
             }
         }
@@ -151,6 +153,19 @@ namespace AgencyBanking.Models
                     .HasConstraintName("FK_CustomerProfile_WalletUsers");
             });
 
+            modelBuilder.Entity<Otp>(entity =>
+            {
+                entity.ToTable("OTP");
+
+                entity.Property(e => e.Email).HasMaxLength(50);
+
+                entity.Property(e => e.Otp1)
+                    .HasMaxLength(50)
+                    .HasColumnName("OTP");
+
+                entity.Property(e => e.Phone).HasMaxLength(50);
+            });
+
             modelBuilder.Entity<Question>(entity =>
             {
                 entity.ToTable("Question");
@@ -230,6 +245,36 @@ namespace AgencyBanking.Models
                     .WithMany(p => p.WalletInfos)
                     .HasForeignKey(d => d.Customerid)
                     .HasConstraintName("FK_WalletInfo_WalletUsers");
+            });
+
+            modelBuilder.Entity<WalletTransfer>(entity =>
+            {
+                entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.Category).HasMaxLength(50);
+
+                entity.Property(e => e.CurrencyCode).HasMaxLength(50);
+
+                entity.Property(e => e.DateCreated).HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.FromAct).HasMaxLength(50);
+
+                entity.Property(e => e.Remarks).HasMaxLength(100);
+
+                entity.Property(e => e.Smid)
+                    .IsRequired()
+                    .HasMaxLength(50)
+                    .HasColumnName("SMID");
+
+                entity.Property(e => e.Status).HasMaxLength(50);
+
+                entity.Property(e => e.ToAcct).HasMaxLength(50);
+
+                entity.HasOne(d => d.Sm)
+                    .WithMany(p => p.WalletTransfers)
+                    .HasForeignKey(d => d.Smid)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_WalletTransfers_WalletUsers");
             });
 
             modelBuilder.Entity<WalletUser>(entity =>

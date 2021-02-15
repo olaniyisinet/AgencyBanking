@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 #nullable disable
 
@@ -32,7 +31,6 @@ namespace AgencyBanking.Models
         public string Rmemail { get; set; }
         public string Rmmobile { get; set; }
 
-        [JsonIgnore]
         public virtual WalletUser Sm { get; set; }
     }
 }

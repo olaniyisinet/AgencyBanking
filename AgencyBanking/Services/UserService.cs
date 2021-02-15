@@ -72,6 +72,9 @@ namespace AgencyBanking.Services
             if (_context.WalletUsers.Any(x => x.Deviceimei == user.Deviceimei))
                 throw new AppException("Device already profiled with a user");
 
+            if (_context.WalletUsers.Any(x => x.PhoneNumber == user.PhoneNumber))
+                throw new AppException("Phone number already profiled with a user");
+
 
             byte[] passwordHash, passwordSalt;
             CreatePasswordHash(password, out passwordHash, out passwordSalt);
@@ -91,8 +94,8 @@ namespace AgencyBanking.Services
                 Lastname = user.LastName,
                 Email = user.EmailAddress,
                 Mobile = user.PhoneNumber,
-                Nuban = "",
-                Availablebalance = 0.00,
+                Nuban = user.PhoneNumber,
+                Availablebalance = 10000.00,
                 Phone = user.PhoneNumber,
                 Gender = user.Gender,
                 FullName = user.FirstName + " " + user.LastName,

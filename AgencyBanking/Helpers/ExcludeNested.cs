@@ -48,7 +48,7 @@ namespace AgencyBanking.Helpers
                 Lastname = wallet.Lastname,
                 Email = wallet.Email,
                 Mobile = wallet.Mobile,
-                Nuban = wallet.Nuban,
+                Nuban = wallet.Mobile,
                 Availablebalance = wallet.Availablebalance,
                 Phone = wallet.Phone,
                 Gender = wallet.Gender,
@@ -61,7 +61,7 @@ namespace AgencyBanking.Helpers
         {
             var Beneficiaries = new List<BeneficiaryResponse>();
 
-            if(beneficiary.Count > 0)
+            if(beneficiary.Any())
             {
                 foreach (var ben in beneficiary)
                 {
@@ -77,6 +77,10 @@ namespace AgencyBanking.Helpers
     });
                 }
             }
+            else
+            {
+                Beneficiaries = null;
+            }
 
             return Beneficiaries;
         }
@@ -86,7 +90,7 @@ namespace AgencyBanking.Helpers
          //   var AccountInfo = new List<CustomerAccountSchemaResponse>();
             var Accounts = new List<CustomerAccount>();
 
-            if (accountSchemas.Count > 0)
+            if (accountSchemas.Any())
             {
                 foreach (var act in accountSchemas)
                 {
@@ -104,6 +108,10 @@ namespace AgencyBanking.Helpers
 
                     Accounts.Add(new CustomerAccount() { AccountInfo = customerAccount });
                 }
+            }
+            else
+            {
+                Accounts = null;
             }
 
             return Accounts;

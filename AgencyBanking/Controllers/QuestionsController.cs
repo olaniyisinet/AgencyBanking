@@ -124,9 +124,6 @@ namespace AgencyBanking.Controllers
 
         }
 
-
-
-
         private bool UserQaExists(string userid, Guid? questionId)
         {
             return _context.UserQas.Any(e => e.UserId == userid && e.QuestionId == questionId);

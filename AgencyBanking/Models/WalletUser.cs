@@ -14,6 +14,7 @@ namespace AgencyBanking.Models
             CustomerProfiles = new HashSet<CustomerProfile>();
             UserQas = new HashSet<UserQa>();
             WalletInfos = new HashSet<WalletInfo>();
+            WalletTransfers = new HashSet<WalletTransfer>();
         }
 
         public string Id { get; set; }
@@ -40,5 +41,6 @@ namespace AgencyBanking.Models
         public virtual ICollection<CustomerProfile> CustomerProfiles { get; set; }
         public virtual ICollection<UserQa> UserQas { get; set; }
         public virtual ICollection<WalletInfo> WalletInfos { get; set; }
+        public virtual ICollection<WalletTransfer> WalletTransfers { get; set; }
     }
 }
