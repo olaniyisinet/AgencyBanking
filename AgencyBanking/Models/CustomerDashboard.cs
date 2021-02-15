@@ -8,8 +8,8 @@ namespace AgencyBanking.Models
     public class CustomerDashboard
     {
         public CustomerAccountSummary AccountSummary { get; set; }
-        public CustomerProfile ProfileInfo { get; set; }
-        public WalletInfo WalletInfo { get; set; }
+        public CustomerProfileResponse ProfileInfo { get; set; }
+        public WalletInfoResponse WalletInfo { get; set; }
     }
 
     public class CustomerAccountSummary

@@ -55,14 +55,14 @@ namespace AgencyBanking.Controllers
 
                     var dashbaord = new CustomerDashboard
                     {
-                        WalletInfo = walletuser.WalletInfos.FirstOrDefault(),
-                        ProfileInfo = walletuser.CustomerProfiles.FirstOrDefault(),
+                        WalletInfo = ExcludeNested.setWalletInfo(walletuser.WalletInfos.FirstOrDefault()),
+                        ProfileInfo = ExcludeNested.setProfile(walletuser.CustomerProfiles.FirstOrDefault()),
                         AccountSummary = acctsummary
                     };
 
                     return Ok(new ResponseModel2
                     {
-                        data = dashbaord,
+                        Data = dashbaord,
                         status = "true",
                         code = HttpContext.Response.StatusCode.ToString(),// "200",
                         message = "User registered successfully",
@@ -73,7 +73,7 @@ namespace AgencyBanking.Controllers
                 {
                     return Ok(new ResponseModel2
                     {
-                        data = _userService.errorMessage,
+                        Data = _userService.errorMessage,
                         status = "false",
                         code = HttpContext.Response.StatusCode.ToString(),
                         message = "User registeration failed. " + _userService.errorMessage,
@@ -85,7 +85,7 @@ namespace AgencyBanking.Controllers
             {
                 return Ok(new ResponseModel2
                 {
-                    data = ex.Message,
+                    Data = ex.Message,
                     status = "false",
                     code = HttpContext.Response.StatusCode.ToString(),
                     message = "User registeration failed. " + ex.Message,
@@ -104,7 +104,7 @@ namespace AgencyBanking.Controllers
                 if (user == null)
                     return BadRequest(new ResponseModel2
                     {
-                        data = "Login failed",
+                        Data = "Login failed",
                         status = "false",
                         code = HttpContext.Response.StatusCode.ToString(),
                         message = "Invalid username or password",
@@ -132,8 +132,8 @@ namespace AgencyBanking.Controllers
 
                 var dashbaord = new CustomerDashboard
                 {
-                    WalletInfo = user.WalletInfos.FirstOrDefault(),
-                    ProfileInfo = user.CustomerProfiles.FirstOrDefault(),
+                    WalletInfo = ExcludeNested.setWalletInfo(user.WalletInfos.FirstOrDefault()),
+                    ProfileInfo = ExcludeNested.setProfile(user.CustomerProfiles.FirstOrDefault()),
                     AccountSummary = acctsummary
                 };
 
@@ -150,7 +150,7 @@ namespace AgencyBanking.Controllers
             {
                 return BadRequest(new ResponseModel2
                 {
-                    data = ex.Message,
+                    Data = ex.Message,
                     status = "false",
                     code = HttpContext.Response.StatusCode.ToString(),
                     message = "Login Failed. " + ex.Message
