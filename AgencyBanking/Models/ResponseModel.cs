@@ -29,4 +29,12 @@ namespace AgencyBanking.Models
         public dynamic response { get; set; }
     }
 
+    public class QuestionResponse
+    {
+        public Guid QuestionId { get; set; }
+        public string Question { get; set; }
+        public string CreatedBy { get; set; }
+        public DateTime? DateCreated { get; set; }
+    }
+
 }

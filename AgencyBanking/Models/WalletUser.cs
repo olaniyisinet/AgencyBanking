@@ -12,6 +12,7 @@ namespace AgencyBanking.Models
             Beneficiaries = new HashSet<Beneficiary>();
             CustomerAccountSchemas = new HashSet<CustomerAccountSchema>();
             CustomerProfiles = new HashSet<CustomerProfile>();
+            UserQas = new HashSet<UserQa>();
             WalletInfos = new HashSet<WalletInfo>();
         }
 
@@ -37,6 +38,7 @@ namespace AgencyBanking.Models
         public virtual ICollection<Beneficiary> Beneficiaries { get; set; }
         public virtual ICollection<CustomerAccountSchema> CustomerAccountSchemas { get; set; }
         public virtual ICollection<CustomerProfile> CustomerProfiles { get; set; }
+        public virtual ICollection<UserQa> UserQas { get; set; }
         public virtual ICollection<WalletInfo> WalletInfos { get; set; }
     }
 }

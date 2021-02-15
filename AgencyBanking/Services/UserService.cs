@@ -78,8 +78,11 @@ namespace AgencyBanking.Services
 
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
-            user.HardwareImei = user.HardwareImei.Substring(0,20);
 
+            if (user.HardwareImei.Length > 20)
+            {
+                user.HardwareImei = user.HardwareImei.Substring(0, 20);
+            }
             //create wallet info
             var wallet = new WalletInfo
             {

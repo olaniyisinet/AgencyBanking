@@ -1,0 +1,1 @@
+ Scaffold-DbContext "Server=tcp:kmndatabase.database.windows.net,1433;Initial Catalog=AgencyBanking;Persist Security Info=False;User ID=kmnadmin;Password=Okot@2020KMN;Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -force

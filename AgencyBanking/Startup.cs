@@ -14,6 +14,7 @@ using System;
 using Microsoft.OpenApi.Models;
 using AgencyBanking.Helpers;
 using AgencyBanking.Services;
+using Newtonsoft.Json.Serialization;
 
 namespace AgencyBanking
 {
@@ -37,12 +38,15 @@ namespace AgencyBanking
             services.AddDbContext<AgencyBankingContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddTransient<ApiLogService>();
 
-
             services.AddCors();
             services.AddControllers();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddControllers().AddNewtonsoftJson(options =>
-    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+            services.AddMvc().AddNewtonsoftJson(options => 
+                options.SerializerSettings.ContractResolver = new DefaultContractResolver());
+
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>

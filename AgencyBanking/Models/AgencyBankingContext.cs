@@ -21,6 +21,8 @@ namespace AgencyBanking.Models
         public virtual DbSet<Beneficiary> Beneficiaries { get; set; }
         public virtual DbSet<CustomerAccountSchema> CustomerAccountSchemas { get; set; }
         public virtual DbSet<CustomerProfile> CustomerProfiles { get; set; }
+        public virtual DbSet<Question> Questions { get; set; }
+        public virtual DbSet<UserQa> UserQas { get; set; }
         public virtual DbSet<WalletInfo> WalletInfos { get; set; }
         public virtual DbSet<WalletUser> WalletUsers { get; set; }
 
@@ -147,6 +149,55 @@ namespace AgencyBanking.Models
                     .WithMany(p => p.CustomerProfiles)
                     .HasForeignKey(d => d.Smid)
                     .HasConstraintName("FK_CustomerProfile_WalletUsers");
+            });
+
+            modelBuilder.Entity<Question>(entity =>
+            {
+                entity.ToTable("Question");
+
+                entity.Property(e => e.QuestionId).ValueGeneratedNever();
+
+                entity.Property(e => e.CreatedBy)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.DateCreated)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Question1)
+                    .HasMaxLength(1000)
+                    .IsUnicode(false)
+                    .HasColumnName("Question");
+            });
+
+            modelBuilder.Entity<UserQa>(entity =>
+            {
+                entity.ToTable("UserQA");
+
+                entity.Property(e => e.UserQaid)
+                    .ValueGeneratedNever()
+                    .HasColumnName("UserQAId");
+
+                entity.Property(e => e.Answer)
+                    .HasMaxLength(1000)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.DateCreated)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.UserId).HasMaxLength(50);
+
+                entity.HasOne(d => d.Question)
+                    .WithMany(p => p.UserQas)
+                    .HasForeignKey(d => d.QuestionId)
+                    .HasConstraintName("FK_UserQA_Question");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.UserQas)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_UserQA_WalletUsers");
             });
 
             modelBuilder.Entity<WalletInfo>(entity =>
