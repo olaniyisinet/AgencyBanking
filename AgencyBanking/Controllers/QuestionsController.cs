@@ -67,39 +67,51 @@ namespace AgencyBanking.Controllers
         [HttpPost("AddUserQuestion")]
         public IActionResult AddUserQuestion(UserQuestions userQas)
         {
-
-            foreach (var uqa in userQas.qa)
-            {
-                if (!UserQaExists(userQas.UserId, uqa.questionId))
+            try {
+                foreach (var uqa in userQas.qa)
                 {
-                    var userQa = new UserQa()
+                    if (!UserQaExists(userQas.UserId, uqa.questionId))
                     {
-                        UserQaid = Guid.NewGuid(),
-                        UserId = userQas.UserId,
-                        QuestionId = uqa.questionId,
-                        Answer = uqa.answer
-                    };
-                    _context.UserQas.Add(userQa);
-
-                    try
-                    {
+                        var userQa = new UserQa()
+                        {
+                            UserQaid = Guid.NewGuid(),
+                            UserId = userQas.UserId,
+                            QuestionId = uqa.questionId,
+                            Answer = uqa.answer
+                        };
+                        _context.UserQas.Add(userQa);
                         _context.SaveChangesAsync();
                     }
-                    catch (DbUpdateException)
-                    {
-
-                    }
                 }
-            }
 
-            return Ok(new ResponseModel2
+                if(_context.UserQas.Where(x => x.UserId.Equals(userQas.UserId)).Count() >= 3)
+                {
+                    var customer = _context.CustomerProfiles.Where(x => x.Smid.Equals(userQas.UserId)).FirstOrDefault();
+                    customer.QuestionCompleted = true;
+
+                    _context.Entry(customer).State = EntityState.Modified;
+                    _context.SaveChangesAsync();
+                }
+
+                return Ok(new ResponseModel2
+                {
+                    Data = "Successful",
+                    status = "true",
+                    code = HttpContext.Response.StatusCode.ToString(),
+                    message = "User Questions Saved Successfully",
+                });
+            }
+            catch(Exception ex)
             {
-                Data = "Successful",
-                status = "true",
-                code = HttpContext.Response.StatusCode.ToString(),
-                message = "User Questions Saved Successfully",
-            });
-        }
+                return Ok(new ResponseModel2
+                {
+                    Data = "Failed",
+                    status = "true",
+                    code = HttpContext.Response.StatusCode.ToString(),
+                    message = "Failed . "+ ex.Message,
+                });
+            }
+            }
 
 
 

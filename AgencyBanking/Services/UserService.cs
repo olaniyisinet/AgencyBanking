@@ -54,6 +54,8 @@ namespace AgencyBanking.Services
                throw new AppException("Device Not Registered with your profile");
 
             // authentication successful
+            Email.Send(user.FirstName + " " + user.LastName, user.EmailAddress, "Agency Banking Login Successful", "You have successfully log in to the Agency Banking APP");
+
             return user;
         }
 
@@ -132,6 +134,8 @@ namespace AgencyBanking.Services
 
             _context.WalletUsers.Add(user);
             _context.SaveChanges();
+
+            Email.Send(user.FirstName + " " + user.LastName, user.EmailAddress, "Agency Banking Successful Registration", "You have successfully registered on the Agency Banking APP");
 
             isSuccessful = true;
             return user;

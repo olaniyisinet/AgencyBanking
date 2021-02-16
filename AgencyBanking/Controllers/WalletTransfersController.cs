@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AgencyBanking.Models;
+using AgencyBanking.Helpers;
 
 namespace AgencyBanking.Controllers
 {
@@ -27,24 +28,12 @@ namespace AgencyBanking.Controllers
         {
             if(!VerifySenderBalance(walletTransfer.SMID, walletTransfer.amt))
             {
-                return Ok(new ResponseModel2
-                {
-                    Data = "Transaction Failed, Insufficient Funds",
-                    status = "false",
-                    code = HttpContext.Response.StatusCode.ToString(),
-                    message = "Transaction Failed, Insufficient Funds",
-                });
+                throw new AppException("Insufficient Funds");
             }
 
             if (!VerifyPin(walletTransfer.TransactionPin, walletTransfer.SMID))
             {
-                return Ok(new ResponseModel2
-                {
-                    Data = "Invalid Transaction Pin",
-                    status = "false",
-                    code = HttpContext.Response.StatusCode.ToString(),// "200",
-                    message = "Invalid Transaction Pin",
-                });
+                throw new AppException("Invalid Transaction Pin");
             }
 
                 var walletTrans = new WalletTransfer()
@@ -85,16 +74,10 @@ namespace AgencyBanking.Controllers
                         _context.Entry(walletTransfer).State = EntityState.Modified;
                         _context.SaveChangesAsync();
 
-                        return Ok(new ResponseModel2
-                        {
-                            Data = "Transaction Failed, Try again later",
-                            status = "false",
-                            code = HttpContext.Response.StatusCode.ToString(),
-                            message = "Transaction Failed, Try again later",
-                        });
-                    }
-               
+                        throw new AppException("Transaction cannot be completed at the moment, Try again later");
                 }
+
+            }
                 catch(Exception ex)
                 {
                     return Ok(new ResponseModel2
@@ -108,23 +91,10 @@ namespace AgencyBanking.Controllers
             }
          
 
-
-
-
-
-
-
-
-
-
-
         private bool VerifyPin(string pin, string smid)
         {
             return _context.WalletUsers.Any(e => e.Id == smid && e.Transactionpin == pin);
         }
-
-
-
 
         private bool VerifySenderBalance(string smid, double? amount)
         {
@@ -152,6 +122,10 @@ namespace AgencyBanking.Controllers
 
                 _context.Entry(customer).State = EntityState.Modified;
                 _context.SaveChangesAsync();
+
+                Email.Send(customer.FirstOrDefault().FullName, customer.FirstOrDefault().Email, "Credit Alert on Agency Banking", "You have successfully recieved NGN" + amount+ " on the Agency Banking App. \n Your new available balance is " + customer.FirstOrDefault().Availablebalance
+                    +".\n Log in to your wallet to confirm your balance. " );
+
             }
             else
             {
