@@ -30,4 +30,9 @@ namespace AgencyBanking.Models
         public string frmacct { get; set; }
         public string remarks { get; set; }
     }
+
+    public class getWalletModel
+    {
+        public string mobile { get; set; }
+    }
 }

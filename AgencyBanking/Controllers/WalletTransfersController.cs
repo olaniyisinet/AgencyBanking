@@ -89,7 +89,42 @@ namespace AgencyBanking.Controllers
                     });
                 }
             }
-         
+
+
+        [HttpPost("GetWallet")]
+        public IActionResult GetWallet(getWalletModel request)
+        {
+            
+            var walletinfo = _context.WalletInfos.Where(x => x.Mobile.Equals(request.mobile));
+
+            try
+            {
+                if (!walletinfo.Any())
+                {
+                    throw new AppException("User not found, please enter the correct mobile number");
+                }
+
+                return Ok(new ResponseModel2
+                {
+                    Data = ExcludeNested.setWalletInfo(walletinfo.FirstOrDefault()),
+                    status = "true",
+                    code = HttpContext.Response.StatusCode.ToString(),
+                    message = "Successful",
+                });
+            }
+            catch(Exception ex)
+            {
+                return Ok(new ResponseModel2
+                {
+                    Data = ex.Message,
+                    status = "false",
+                    code = HttpContext.Response.StatusCode.ToString(),
+                    message = ex.Message,
+                });
+            }
+        }
+
+
 
         private bool VerifyPin(string pin, string smid)
         {
