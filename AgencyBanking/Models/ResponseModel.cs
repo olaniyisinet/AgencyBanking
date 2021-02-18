@@ -102,4 +102,18 @@ namespace AgencyBanking.Models
         public string AccountNumber { get; set; }
         public string Currency { get; set; }
     }
+
+    public class WalletTransaferResponse
+    {
+        public Guid Id { get; set; }
+        public double? Amount { get; set; }
+        public string Smid { get; set; }
+        public string Category { get; set; }
+        public string CurrencyCode { get; set; }
+        public string ToAcct { get; set; }
+        public string FromAct { get; set; }
+        public string Remarks { get; set; }
+        public DateTime? DateCreated { get; set; }
+        public string Status { get; set; }
+    }
 }

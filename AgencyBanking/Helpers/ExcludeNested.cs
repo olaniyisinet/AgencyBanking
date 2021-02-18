@@ -116,5 +116,37 @@ namespace AgencyBanking.Helpers
 
             return Accounts;
         }
+
+
+        public static List<WalletTransaferResponse> setTransactionHistory(List<WalletTransfer> walletTransfer)
+        {
+            var transfers = new List<WalletTransaferResponse>();
+
+            if (transfers.Any())
+            {
+                foreach (var trans in walletTransfer)
+                {
+                    transfers.Add(new WalletTransaferResponse()
+                    {
+                         Id = trans.Id,
+                         Amount = trans.Amount,
+                         Smid = trans.Smid,
+                         Category = trans.Category,
+                         CurrencyCode = trans.CurrencyCode,
+                         ToAcct  = trans.ToAcct,
+                         FromAct = trans.FromAct,
+                         Remarks = trans.Remarks,
+                         DateCreated = trans.DateCreated,
+                         Status = trans.Status
+                    });
+                }
+            }
+            else
+            {
+                transfers = null;
+            }
+
+            return transfers;
+        }
     }
 }

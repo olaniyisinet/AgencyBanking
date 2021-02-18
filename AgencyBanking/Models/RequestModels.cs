@@ -29,10 +29,24 @@ namespace AgencyBanking.Models
         public string toacct { get; set; }
         public string frmacct { get; set; }
         public string remarks { get; set; }
+        public bool saveBeneficiary { get; set; }
     }
 
     public class getWalletModel
     {
         public string mobile { get; set; }
     }
+
+    public class getBeneficiary
+    {
+        public string UserId { get; set; }
+    }
+
+    public class getTransactions
+    {
+        public string nuban { get; set; }
+        public string From { get; set; }
+        public string To { get; set; }
+        public string Filter { get; set; }
+}
 }

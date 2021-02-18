@@ -28,12 +28,25 @@ namespace AgencyBanking.Controllers
         {
             if(!VerifySenderBalance(walletTransfer.SMID, walletTransfer.amt))
             {
-                throw new AppException("Insufficient Funds");
+                return Ok(new ResponseModel2
+                {
+                    Data = "Insufficient Funds",
+                    status = "false",
+                    code = HttpContext.Response.StatusCode.ToString(),
+                    message = "Failed. Insufficient Funds"
+                }) ;
             }
 
             if (!VerifyPin(walletTransfer.TransactionPin, walletTransfer.SMID))
             {
-                throw new AppException("Invalid Transaction Pin");
+
+                return Ok(new ResponseModel2
+                {
+                    Data = "Invalid Transaction Pin",
+                    status = "false",
+                    code = HttpContext.Response.StatusCode.ToString(),
+                    message = "Failed. Invalid Transaction Pin"
+                });
             }
 
                 var walletTrans = new WalletTransfer()
@@ -53,7 +66,7 @@ namespace AgencyBanking.Controllers
                 {
                     _context.WalletTransfers.Add(walletTrans);
                     _context.SaveChanges();
-            }
+                }
                 catch(Exception ex)
                 {
                     return Ok(new ResponseModel2
@@ -65,7 +78,7 @@ namespace AgencyBanking.Controllers
                     });
                 }
 
-            if (UpdateWalletBalance(walletTransfer.toacct, walletTransfer.amt, walletTransfer.frmacct))
+            if (UpdateRecieverWalletBalance(walletTransfer.toacct, walletTransfer.amt, walletTransfer.SMID, walletTransfer.saveBeneficiary))
             {
                 walletTrans.Status = "Successful";
                 _context.Entry(walletTrans).State = EntityState.Modified;
@@ -84,7 +97,14 @@ namespace AgencyBanking.Controllers
                 walletTrans.Status = "Failed";
                 _context.Entry(walletTransfer).State = EntityState.Modified;
                 _context.SaveChangesAsync();
-                throw new AppException("Transaction cannot be completed at the moment, Try again later");
+
+                return Ok(new ResponseModel2
+                {
+                    Data = "Transaction cannot be completed at the moment, Try again later",
+                    status = "false",
+                    code = HttpContext.Response.StatusCode.ToString(),
+                    message = "Failed. Transaction cannot be completed at the moment, Try again later"
+                });
             }
         }
 
@@ -121,6 +141,62 @@ namespace AgencyBanking.Controllers
             }
         }
 
+        [HttpPost("GetBeneficiary")]
+        public IActionResult GetBeneficiary(getBeneficiary request)
+        {
+            var beneficiaries = _context.Beneficiaries.Where(x => x.UserId.Equals(request.UserId)).ToList();
+
+            try
+            {
+                    return Ok(new ResponseModel2
+                    {
+                        Data = ExcludeNested.setBeneficiary(beneficiaries),
+                        status = "true",
+                        code = HttpContext.Response.StatusCode.ToString(),
+                        message = "Successful",
+                    });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new ResponseModel2
+                {
+                    Data = ex.Message,
+                    status = "false",
+                    code = HttpContext.Response.StatusCode.ToString(),
+                    message = ex.Message,
+                });
+            }
+        }
+
+
+        [HttpPost("TransactionHistory")]
+        public IActionResult TransactionHistory(getTransactions request)
+        {
+            var transactions = _context.WalletTransfers.Where(x => x.FromAct.Equals(request.From) || x.ToAcct.Equals(request.To)).ToList();
+
+            try
+            {
+                return Ok(new ResponseModel2
+                {
+                    Data = ExcludeNested.setTransactionHistory(transactions),
+                    status = "true",
+                    code = HttpContext.Response.StatusCode.ToString(),
+                    message = "Successful",
+                });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new ResponseModel2
+                {
+                    Data = ex.Message,
+                    status = "false",
+                    code = HttpContext.Response.StatusCode.ToString(),
+                    message = ex.Message,
+                });
+            }
+        }
+
+
         private bool VerifyPin(string pin, string smid)
         {
             return _context.WalletUsers.Any(e => e.Id == smid && e.Transactionpin == pin);
@@ -146,9 +222,9 @@ namespace AgencyBanking.Controllers
             }
         }
    
-        private bool DebitSender(string senderNuban, double? amount)
+        private bool DebitSender(string customerID, double? amount)
         {
-            var sender = _context.WalletInfos.Where(x => x.Nuban == senderNuban).FirstOrDefault();
+            var sender = _context.WalletInfos.Where(x => x.Customerid == customerID).FirstOrDefault();
 
             if (sender != null)
             {
@@ -168,13 +244,13 @@ namespace AgencyBanking.Controllers
             return true;
         }
 
-        private bool UpdateWalletBalance(string Nuban, double? amount, string senderNuban)
+        private bool UpdateRecieverWalletBalance(string Nuban, double? amount, string senderID, bool saveBeneficiary)
         {
-            var customer = _context.WalletInfos.Where(x => x.Nuban == Nuban).FirstOrDefault(); ;
+            var customer = _context.WalletInfos.Where(x => x.Nuban == Nuban).FirstOrDefault();
 
             if (customer != null)
             {
-                if (DebitSender(senderNuban, amount))
+                if (DebitSender(senderID, amount))
                 {
                     customer.Availablebalance = customer.Availablebalance + amount;
 
@@ -184,9 +260,12 @@ namespace AgencyBanking.Controllers
                     Email.Send(customer.FullName, customer.Email, "Credit Alert on Agency Banking", "You have successfully recieved NGN" + amount + " on the Agency Banking App. \n Your new available balance is " + customer.Availablebalance
                         + ".\n Log in to your wallet to confirm your balance. ");
 
+                    if (saveBeneficiary)
+                    {
+                        SaveBeneficiary(senderID, Nuban, customer.FullName);
+                    }
                     return true;
                 }
-               
             }
             else
             { 
@@ -194,6 +273,27 @@ namespace AgencyBanking.Controllers
             }
 
             return false;
+        }
+
+        private void SaveBeneficiary(string userId, string BeneficiaryAccountNumber, string BeneficiaryAccountName)
+        {
+            var beneficiary = new Beneficiary()
+            {
+                UserId = userId,
+                BeneficiaryAccountNumber = BeneficiaryAccountNumber,
+                BeneficiaryAccountName = BeneficiaryAccountName,
+                BeneficiaryBankName = "",
+                BeneficiaryBankCode = ""
+            };
+
+            try
+            {
+                _context.Beneficiaries.Add(beneficiary);
+                _context.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+            }
         }
     }
 }

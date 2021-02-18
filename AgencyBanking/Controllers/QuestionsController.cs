@@ -106,7 +106,7 @@ namespace AgencyBanking.Controllers
                 return Ok(new ResponseModel2
                 {
                     Data = "Failed",
-                    status = "true",
+                    status = "false",
                     code = HttpContext.Response.StatusCode.ToString(),
                     message = "Failed . "+ ex.Message,
                 });
