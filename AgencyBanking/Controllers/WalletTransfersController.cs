@@ -52,31 +52,7 @@ namespace AgencyBanking.Controllers
                 try
                 {
                     _context.WalletTransfers.Add(walletTrans);
-                    _context.SaveChangesAsync();
-
-                    if (UpdateWalletBalance(walletTransfer.toacct, walletTransfer.amt))
-                    {
-                        walletTrans.Status = "Successful";
-                        _context.Entry(walletTransfer).State = EntityState.Modified;
-                        _context.SaveChangesAsync();
-
-                        return Ok(new ResponseModel2
-                        {
-                            Data = "Transaction Successful",
-                            status = "true",
-                            code = HttpContext.Response.StatusCode.ToString(),
-                            message = "Transaction Successful",
-                        });
-                    }
-                    else
-                    {
-                        walletTrans.Status = "Failed";
-                        _context.Entry(walletTransfer).State = EntityState.Modified;
-                        _context.SaveChangesAsync();
-
-                        throw new AppException("Transaction cannot be completed at the moment, Try again later");
-                }
-
+                    _context.SaveChanges();
             }
                 catch(Exception ex)
                 {
@@ -88,8 +64,29 @@ namespace AgencyBanking.Controllers
                         message = "Transaction Failed. " + ex.Message,
                     });
                 }
-            }
 
+            if (UpdateWalletBalance(walletTransfer.toacct, walletTransfer.amt, walletTransfer.frmacct))
+            {
+                walletTrans.Status = "Successful";
+                _context.Entry(walletTrans).State = EntityState.Modified;
+                _context.SaveChanges();
+
+                return Ok(new ResponseModel2
+                {
+                    Data = "Transaction Successful",
+                    status = "true",
+                    code = HttpContext.Response.StatusCode.ToString(),
+                    message = "Transaction Successful",
+                });
+            }
+            else
+            {
+                walletTrans.Status = "Failed";
+                _context.Entry(walletTransfer).State = EntityState.Modified;
+                _context.SaveChangesAsync();
+                throw new AppException("Transaction cannot be completed at the moment, Try again later");
+            }
+        }
 
         [HttpPost("GetWallet")]
         public IActionResult GetWallet(getWalletModel request)
@@ -124,8 +121,6 @@ namespace AgencyBanking.Controllers
             }
         }
 
-
-
         private bool VerifyPin(string pin, string smid)
         {
             return _context.WalletUsers.Any(e => e.Id == smid && e.Transactionpin == pin);
@@ -134,6 +129,11 @@ namespace AgencyBanking.Controllers
         private bool VerifySenderBalance(string smid, double? amount)
         {
             var sender = _context.WalletInfos.Where(x => x.Customerid == smid);
+
+            if (!sender.Any())
+            {
+                return false;
+            }
 
             if (sender.FirstOrDefault().Availablebalance >= amount)
             {
@@ -145,22 +145,20 @@ namespace AgencyBanking.Controllers
                 return false;
             }
         }
-
-
-        private bool UpdateWalletBalance(string Nuban, double? amount)
+   
+        private bool DebitSender(string senderNuban, double? amount)
         {
-            var customer = _context.WalletInfos.Where(x => x.Nuban == Nuban);
+            var sender = _context.WalletInfos.Where(x => x.Nuban == senderNuban).FirstOrDefault();
 
-            if (customer.Any())
+            if (sender != null)
             {
-                customer.FirstOrDefault().Availablebalance = customer.FirstOrDefault().Availablebalance + amount;
+                sender.Availablebalance = sender.Availablebalance - amount;
 
-                _context.Entry(customer).State = EntityState.Modified;
-                _context.SaveChangesAsync();
+                _context.Entry(sender).State = EntityState.Modified;
+                _context.SaveChanges();
 
-                Email.Send(customer.FirstOrDefault().FullName, customer.FirstOrDefault().Email, "Credit Alert on Agency Banking", "You have successfully recieved NGN" + amount+ " on the Agency Banking App. \n Your new available balance is " + customer.FirstOrDefault().Availablebalance
-                    +".\n Log in to your wallet to confirm your balance. " );
-
+           //     Email.Send(sender.FirstOrDefault().FullName, sender.FirstOrDefault().Email, "Debit Alert on Agency Banking", "You have successfully sent NGN" + amount + " from the Agency Banking App wallet to a friend. \n Your new available balance is "
+                  //  + sender.FirstOrDefault().Availablebalance + ".\n Log in to your wallet to confirm your balance. ");
             }
             else
             {
@@ -168,6 +166,34 @@ namespace AgencyBanking.Controllers
             }
 
             return true;
+        }
+
+        private bool UpdateWalletBalance(string Nuban, double? amount, string senderNuban)
+        {
+            var customer = _context.WalletInfos.Where(x => x.Nuban == Nuban).FirstOrDefault(); ;
+
+            if (customer != null)
+            {
+                if (DebitSender(senderNuban, amount))
+                {
+                    customer.Availablebalance = customer.Availablebalance + amount;
+
+                    _context.Entry(customer).State = EntityState.Modified;
+                    _context.SaveChanges();
+
+                    Email.Send(customer.FullName, customer.Email, "Credit Alert on Agency Banking", "You have successfully recieved NGN" + amount + " on the Agency Banking App. \n Your new available balance is " + customer.Availablebalance
+                        + ".\n Log in to your wallet to confirm your balance. ");
+
+                    return true;
+                }
+               
+            }
+            else
+            { 
+                return false;
+            }
+
+            return false;
         }
     }
 }
