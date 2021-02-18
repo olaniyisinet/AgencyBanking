@@ -277,6 +277,11 @@ namespace AgencyBanking.Controllers
 
         private void SaveBeneficiary(string userId, string BeneficiaryAccountNumber, string BeneficiaryAccountName)
         {
+            if (_context.Beneficiaries.Any(x => x.UserId.Equals(userId) && x.BeneficiaryAccountNumber.Equals(BeneficiaryAccountNumber)))
+            {
+                return;
+            }
+
             var beneficiary = new Beneficiary()
             {
                 UserId = userId,
