@@ -126,20 +126,24 @@ namespace AgencyBanking.Helpers
             {
                 foreach (var trans in walletTransfer)
                 {
-                    var transaction = new WalletHistoryResponse();
+                    var transaction = new WalletHistoryResponse
+                    {
+                        Id = trans.Id,
+                        Amount = trans.Amount,
+                        Smid = trans.Smid,
+                        Category = trans.Category,
+                        CurrencyCode = trans.CurrencyCode,
+                        ToAcct = trans.ToAcct,
+                        FromAct = trans.FromAct,
+                        Remarks = trans.Remarks,
+                        TransactionDate = trans.DateCreated,
+                        Status = trans.Status,
+                        ValueDate = trans.DateCreated,
+                        BalanceAfterDebit = int.Parse(trans.BalanceAfterDebit.ToString()),
+                        BalanceAfterCredit = int.Parse(trans.BalanceAfterCredit.ToString())
+                    };
 
-                    transaction.Id = trans.Id;
-                    transaction.Amount = trans.Amount;
-                    transaction.Smid = trans.Smid;
-                    transaction.Category = trans.Category;
-                    transaction.CurrencyCode = trans.CurrencyCode;
-                    transaction.ToAcct = trans.ToAcct;
-                    transaction.FromAct = trans.FromAct;
-                    transaction.Remarks = trans.Remarks;
-                    transaction.TransactionDate = trans.DateCreated;
-                    transaction.Status = trans.Status;
-                        
-                    if(trans.FromAct == nuban)   
+                    if (trans.FromAct == nuban)   
                     {
                         transaction.IsDebit = true;
                         transaction.DebitCredit = "1";
@@ -151,10 +155,6 @@ namespace AgencyBanking.Helpers
                         transaction.DebitCredit = "2";
                         transaction.Balance = int.Parse(trans.BalanceAfterCredit.ToString());
                     }
-
-                    transaction.ValueDate = trans.DateCreated;
-                    transaction.BalanceAfterDebit = int.Parse(trans.BalanceAfterDebit.ToString());
-                    transaction.BalanceAfterCredit = int.Parse(trans.BalanceAfterCredit.ToString());
 
                     transfers.Add(transaction);
                     }

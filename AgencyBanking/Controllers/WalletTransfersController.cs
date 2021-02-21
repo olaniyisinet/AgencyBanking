@@ -172,7 +172,9 @@ namespace AgencyBanking.Controllers
         [HttpPost("getwallethistory")]
         public IActionResult getwallethistory(getTransactions request)
         {
-            var transactions = _context.WalletTransfers.Where(x => x.FromAct.Equals(request.nuban) || x.ToAcct.Equals(request.nuban)).OrderByDescending(x => x.DateCreated);
+            var user = _context.WalletInfos.Where(x => x.Customerid.Equals(request.SMID)).FirstOrDefault();
+
+            var transactions = _context.WalletTransfers.Where(x => x.FromAct.Equals(user.Nuban) || x.ToAcct.Equals(user.Nuban)).OrderByDescending(x => x.DateCreated);
 
             try 
             { 
@@ -189,7 +191,7 @@ namespace AgencyBanking.Controllers
             {
                 return Ok(new ResponseModel2
                 {
-                    Data = ExcludeNested.setTransactionHistory(transactions.ToList(), request.nuban),
+                    Data = ExcludeNested.setTransactionHistory(transactions.ToList(), user.Nuban),
                     status = "true",
                     code = HttpContext.Response.StatusCode.ToString(),
                     message = "Successful",
