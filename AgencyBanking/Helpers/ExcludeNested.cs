@@ -118,29 +118,47 @@ namespace AgencyBanking.Helpers
         }
 
 
-        public static List<WalletTransaferResponse> setTransactionHistory(List<WalletTransfer> walletTransfer)
+        public static List<WalletHistoryResponse> setTransactionHistory(List<WalletTransfer> walletTransfer, string nuban)
         {
-            var transfers = new List<WalletTransaferResponse>();
+            var transfers = new List<WalletHistoryResponse>();
 
-            if (transfers.Any())
+            if (walletTransfer.Any())
             {
                 foreach (var trans in walletTransfer)
                 {
-                    transfers.Add(new WalletTransaferResponse()
+                    var transaction = new WalletHistoryResponse();
+
+                    transaction.Id = trans.Id;
+                    transaction.Amount = trans.Amount;
+                    transaction.Smid = trans.Smid;
+                    transaction.Category = trans.Category;
+                    transaction.CurrencyCode = trans.CurrencyCode;
+                    transaction.ToAcct = trans.ToAcct;
+                    transaction.FromAct = trans.FromAct;
+                    transaction.Remarks = trans.Remarks;
+                    transaction.TransactionDate = trans.DateCreated;
+                    transaction.Status = trans.Status;
+                        
+                    if(trans.FromAct == nuban)   
                     {
-                         Id = trans.Id,
-                         Amount = trans.Amount,
-                         Smid = trans.Smid,
-                         Category = trans.Category,
-                         CurrencyCode = trans.CurrencyCode,
-                         ToAcct  = trans.ToAcct,
-                         FromAct = trans.FromAct,
-                         Remarks = trans.Remarks,
-                         DateCreated = trans.DateCreated,
-                         Status = trans.Status
-                    });
+                        transaction.IsDebit = true;
+                        transaction.DebitCredit = "1";
+                    }
+                    else    
+                    {
+                        transaction.IsDebit = false;
+                        transaction.DebitCredit = "2";
+                    }
+
+                    transaction.ValueDate = trans.DateCreated;
+                    transaction.BalanceAfterDebit = 0;
+                    transaction.BalanceAfterCredit = 0;
+                    transaction.Balance = 0;
+
+                    transfers.Add(transaction);
+                    }
                 }
-            }
+            
             else
             {
                 transfers = null;

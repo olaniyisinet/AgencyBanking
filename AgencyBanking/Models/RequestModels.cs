@@ -47,6 +47,5 @@ namespace AgencyBanking.Models
         public string nuban { get; set; }
         public string From { get; set; }
         public string To { get; set; }
-        public string Filter { get; set; }
 }
 }

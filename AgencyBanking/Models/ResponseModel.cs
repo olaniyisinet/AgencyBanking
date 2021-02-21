@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -115,5 +116,34 @@ namespace AgencyBanking.Models
         public string Remarks { get; set; }
         public DateTime? DateCreated { get; set; }
         public string Status { get; set; }
+    }
+
+    public class WalletHistoryResponse
+    {
+        public Guid Id { get; set; }
+        [JsonProperty("amt")]
+        public double? Amount { get; set; }
+        public string Smid { get; set; }
+        public string Category { get; set; }
+        [JsonProperty("currencycode")]
+        public string CurrencyCode { get; set; }
+        public string ToAcct { get; set; }
+        public string FromAct { get; set; }
+        [JsonProperty("remarks")]
+        public string Remarks { get; set; }
+        [JsonProperty("TRA_DATE")]
+        public DateTime? TransactionDate { get; set; }
+        public string Status { get; set; }
+        public bool IsDebit { get;  set; }
+        [JsonProperty("val_date")]
+        public DateTime? ValueDate { get; set; }  
+        [JsonProperty("BalanceAD")]
+        public int BalanceAfterDebit { get; set; }
+        [JsonProperty("BalanceAC")]
+        public int BalanceAfterCredit { get; set; }
+        [JsonProperty("Balance")]
+        public int Balance { get; set; }
+        [JsonProperty("deb_cre_ind")]
+        public string DebitCredit { get; set; }
     }
 }

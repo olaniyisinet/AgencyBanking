@@ -169,16 +169,27 @@ namespace AgencyBanking.Controllers
         }
 
 
-        [HttpPost("TransactionHistory")]
-        public IActionResult TransactionHistory(getTransactions request)
+        [HttpPost("getwallethistory")]
+        public IActionResult getwallethistory(getTransactions request)
         {
-            var transactions = _context.WalletTransfers.Where(x => x.FromAct.Equals(request.From) || x.ToAcct.Equals(request.To)).ToList();
+            var transactions = _context.WalletTransfers.Where(x => x.FromAct.Equals(request.nuban) || x.ToAcct.Equals(request.nuban));
+
+            try 
+            { 
+                var from = DateTime.Parse(request.From);
+                var to = DateTime.Parse(request.To);
+                transactions = transactions.Where(x => x.DateCreated >= from && x.DateCreated <= to).OrderByDescending(x => x.DateCreated);
+            }
+            catch
+            {
+
+            }
 
             try
             {
                 return Ok(new ResponseModel2
                 {
-                    Data = ExcludeNested.setTransactionHistory(transactions),
+                    Data = ExcludeNested.setTransactionHistory(transactions.ToList(), request.nuban),
                     status = "true",
                     code = HttpContext.Response.StatusCode.ToString(),
                     message = "Successful",
