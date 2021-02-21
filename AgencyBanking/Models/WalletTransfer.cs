@@ -17,6 +17,9 @@ namespace AgencyBanking.Models
         public string Remarks { get; set; }
         public DateTime? DateCreated { get; set; }
         public string Status { get; set; }
+        public double? BalanceAfterDebit { get; set; }
+        public double? BalanceAfterCredit { get; set; }
+        public double? Balance { get; set; }
 
         public virtual WalletUser Sm { get; set; }
     }

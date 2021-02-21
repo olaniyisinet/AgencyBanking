@@ -15,6 +15,7 @@ namespace AgencyBanking.Controllers
     public class WalletTransfersController : ControllerBase
     {
         private readonly AgencyBankingContext _context;
+        private double? senderBalanceAfterDebit;
 
         public WalletTransfersController(AgencyBankingContext context)
         {
@@ -78,11 +79,11 @@ namespace AgencyBanking.Controllers
                     });
                 }
 
-            if (UpdateRecieverWalletBalance(walletTransfer.toacct, walletTransfer.amt, walletTransfer.SMID, walletTransfer.saveBeneficiary))
+            if (UpdateWalletBalances(walletTrans.Id, walletTransfer.toacct, walletTransfer.amt, walletTransfer.SMID, walletTransfer.saveBeneficiary))
             {
-                walletTrans.Status = "Successful";
-                _context.Entry(walletTrans).State = EntityState.Modified;
-                _context.SaveChanges();
+                //walletTrans.Status = "Successful";
+                //_context.Entry(walletTrans).State = EntityState.Modified;
+                //_context.SaveChanges();
 
                 return Ok(new ResponseModel2
                 {
@@ -168,11 +169,10 @@ namespace AgencyBanking.Controllers
             }
         }
 
-
         [HttpPost("getwallethistory")]
         public IActionResult getwallethistory(getTransactions request)
         {
-            var transactions = _context.WalletTransfers.Where(x => x.FromAct.Equals(request.nuban) || x.ToAcct.Equals(request.nuban));
+            var transactions = _context.WalletTransfers.Where(x => x.FromAct.Equals(request.nuban) || x.ToAcct.Equals(request.nuban)).OrderByDescending(x => x.DateCreated);
 
             try 
             { 
@@ -207,7 +207,6 @@ namespace AgencyBanking.Controllers
             }
         }
 
-
         private bool VerifyPin(string pin, string smid)
         {
             return _context.WalletUsers.Any(e => e.Id == smid && e.Transactionpin == pin);
@@ -239,7 +238,7 @@ namespace AgencyBanking.Controllers
 
             if (sender != null)
             {
-                sender.Availablebalance = sender.Availablebalance - amount;
+                sender.Availablebalance -= amount;
 
                 _context.Entry(sender).State = EntityState.Modified;
                 _context.SaveChanges();
@@ -251,11 +250,11 @@ namespace AgencyBanking.Controllers
             {
                 return false;
             }
-
+            senderBalanceAfterDebit = sender.Availablebalance;
             return true;
         }
 
-        private bool UpdateRecieverWalletBalance(string Nuban, double? amount, string senderID, bool saveBeneficiary)
+        private bool UpdateWalletBalances(Guid transactionId, string Nuban, double? amount, string senderID, bool saveBeneficiary)
         {
             var customer = _context.WalletInfos.Where(x => x.Nuban == Nuban).FirstOrDefault();
 
@@ -263,18 +262,20 @@ namespace AgencyBanking.Controllers
             {
                 if (DebitSender(senderID, amount))
                 {
-                    customer.Availablebalance = customer.Availablebalance + amount;
-
+                    customer.Availablebalance += amount;
                     _context.Entry(customer).State = EntityState.Modified;
                     _context.SaveChanges();
 
-                    Email.Send(customer.FullName, customer.Email, "Credit Alert on Agency Banking", "You have successfully recieved NGN" + amount + " on the Agency Banking App. \n Your new available balance is " + customer.Availablebalance
-                        + ".\n Log in to your wallet to confirm your balance. ");
+                    UpdateTransationStatus(transactionId, senderBalanceAfterDebit, customer.Availablebalance, senderBalanceAfterDebit);
 
                     if (saveBeneficiary)
                     {
                         SaveBeneficiary(senderID, Nuban, customer.FullName);
                     }
+
+                    //  Email.Send(customer.FullName, customer.Email, "Credit Alert on Agency Banking", "You have successfully recieved NGN" + amount + " on the Agency Banking App. \n Your new available balance is " + customer.Availablebalance
+                    //    + ".\n Log in to your wallet to confirm your balance. ");
+
                     return true;
                 }
             }
@@ -284,6 +285,19 @@ namespace AgencyBanking.Controllers
             }
 
             return false;
+        }
+
+        private void UpdateTransationStatus(Guid transactionId, double? BalanceAfterDebit, double? BalanceAfterCredit, double? Balance)
+        {
+            var transaction = _context.WalletTransfers.Find(transactionId);
+            transaction.Status = "Successful";
+            transaction.Balance = Balance;
+            transaction.BalanceAfterCredit = BalanceAfterCredit;
+            transaction.BalanceAfterDebit = BalanceAfterDebit;
+
+            _context.Entry(transaction).State = EntityState.Modified;
+            _context.SaveChanges();
+
         }
 
         private void SaveBeneficiary(string userId, string BeneficiaryAccountNumber, string BeneficiaryAccountName)

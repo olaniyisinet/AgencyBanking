@@ -143,17 +143,18 @@ namespace AgencyBanking.Helpers
                     {
                         transaction.IsDebit = true;
                         transaction.DebitCredit = "1";
+                        transaction.Balance = int.Parse(trans.BalanceAfterDebit.ToString());
                     }
                     else    
                     {
                         transaction.IsDebit = false;
                         transaction.DebitCredit = "2";
+                        transaction.Balance = int.Parse(trans.BalanceAfterCredit.ToString());
                     }
 
                     transaction.ValueDate = trans.DateCreated;
-                    transaction.BalanceAfterDebit = 0;
-                    transaction.BalanceAfterCredit = 0;
-                    transaction.Balance = 0;
+                    transaction.BalanceAfterDebit = int.Parse(trans.BalanceAfterDebit.ToString());
+                    transaction.BalanceAfterCredit = int.Parse(trans.BalanceAfterCredit.ToString());
 
                     transfers.Add(transaction);
                     }
