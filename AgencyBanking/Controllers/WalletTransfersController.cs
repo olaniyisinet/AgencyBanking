@@ -23,7 +23,7 @@ namespace AgencyBanking.Controllers
         }
 
         // POST: api/WalletTransfers
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // EndDate protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("WalletTransfer")]
         public IActionResult WalletTransfer(WalletTransferRequest walletTransfer)
         {
@@ -173,18 +173,26 @@ namespace AgencyBanking.Controllers
         public IActionResult getwallethistory(getTransactions request)
         {
             var user = _context.WalletInfos.Where(x => x.Customerid.Equals(request.SMID)).FirstOrDefault();
-
+            if(user == null)
+            {
+                return Ok(new ResponseModel2
+                {
+                    Data = null,
+                    status = "true",
+                    code = HttpContext.Response.StatusCode.ToString(),
+                    message = "Successful",
+                });
+            }
             var transactions = _context.WalletTransfers.Where(x => x.FromAct.Equals(user.Nuban) || x.ToAcct.Equals(user.Nuban)).OrderByDescending(x => x.DateCreated);
 
             try 
             { 
-                var from = DateTime.Parse(request.From);
-                var to = DateTime.Parse(request.To);
+                var from = DateTime.Parse(request.StartDate);
+                var to = DateTime.Parse(request.EndDate);
                 transactions = transactions.Where(x => x.DateCreated >= from && x.DateCreated <= to).OrderByDescending(x => x.DateCreated);
             }
             catch
             {
-
             }
 
             try
@@ -192,6 +200,44 @@ namespace AgencyBanking.Controllers
                 return Ok(new ResponseModel2
                 {
                     Data = ExcludeNested.setTransactionHistory(transactions.ToList(), user.Nuban),
+                    status = "true",
+                    code = HttpContext.Response.StatusCode.ToString(), 
+                    message = "Successful",
+                });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new ResponseModel2
+                {
+                    Data = ex.Message,
+                    status = "false",
+                    code = HttpContext.Response.StatusCode.ToString(),
+                    message = ex.Message,
+                });
+            }
+        }
+
+        [HttpPost("getwallethistorywithnuban")]
+        public IActionResult getwallethistorywithnuban(getTransactionswithnuban request)
+        {
+
+            var transactions = _context.WalletTransfers.Where(x => x.FromAct.Equals(request.Nuban) || x.ToAcct.Equals(request.Nuban)).OrderByDescending(x => x.DateCreated);
+
+            try
+            {
+                var from = DateTime.Parse(request.StartDate);
+                var to = DateTime.Parse(request.EndDate);
+                transactions = transactions.Where(x => x.DateCreated >= from && x.DateCreated <= to).OrderByDescending(x => x.DateCreated);
+            }
+            catch
+            {
+            }
+
+            try
+            {
+                return Ok(new ResponseModel2
+                {
+                    Data = ExcludeNested.setTransactionHistory(transactions.ToList(), request.Nuban),
                     status = "true",
                     code = HttpContext.Response.StatusCode.ToString(),
                     message = "Successful",
@@ -208,6 +254,30 @@ namespace AgencyBanking.Controllers
                 });
             }
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // Helper methods *******************************************************************************
 
         private bool VerifyPin(string pin, string smid)
         {

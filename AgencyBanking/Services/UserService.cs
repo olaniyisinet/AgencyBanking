@@ -50,8 +50,8 @@ namespace AgencyBanking.Services
             if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
                 return null;
 
-            if (user.Deviceimei != DeviceIMEI)
-               throw new AppException("Device Not Registered with your profile");
+          //  if (user.Deviceimei != DeviceIMEI)
+            //   throw new AppException("Device Not Registered with your profile");
 
             // authentication successful
             Email.Send(user.FirstName + " " + user.LastName, user.EmailAddress, "Agency Banking Login Successful", "You have successfully log in to the Agency Banking APP");

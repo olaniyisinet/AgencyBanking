@@ -45,7 +45,14 @@ namespace AgencyBanking.Models
     public class getTransactions
     {
         public string SMID { get; set; }
-        public string From { get; set; }
-        public string To { get; set; }
+        public string StartDate { get; set; }
+        public string EndDate { get; set; }
 }
+
+    public class getTransactionswithnuban
+    {
+        public string Nuban { get; set; }
+        public string StartDate { get; set; }
+        public string EndDate { get; set; }
+    }
 }
