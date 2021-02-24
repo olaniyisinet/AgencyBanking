@@ -221,15 +221,15 @@ namespace AgencyBanking.Controllers
         public IActionResult getwallethistorywithnuban(getTransactionswithnuban request)
         {
 
-            var transactions = _context.WalletTransfers.Where(x => x.FromAct.Equals(request.Nuban) || x.ToAcct.Equals(request.Nuban)).OrderByDescending(x => x.DateCreated);
+            var transactions = _context.WalletTransfers.Where(x => x.FromAct.Equals(request.Nuban) || x.ToAcct.Equals(request.Nuban));
 
             try
             {
-                var from = DateTime.Parse(request.StartDate);
-                var to = DateTime.Parse(request.EndDate);
-                transactions = transactions.Where(x => x.DateCreated >= from && x.DateCreated <= to).OrderByDescending(x => x.DateCreated);
+                var from = DateTime.Parse(request.StartDate).Date;
+                var to = DateTime.Parse(request.EndDate).Date.AddDays(1);
+                transactions = _context.WalletTransfers.Where(x => x.FromAct.Equals(request.Nuban) || x.ToAcct.Equals(request.Nuban) && x.DateCreated >= from && x.DateCreated < to);    
             }
-            catch
+            catch      
             {
             }
 

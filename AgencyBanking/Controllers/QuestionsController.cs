@@ -70,27 +70,27 @@ namespace AgencyBanking.Controllers
             try {
                 foreach (var uqa in userQas.qa)
                 {
-                    if (!UserQaExists(userQas.UserId, uqa.questionId))
+                    if (!UserQaExists(userQas.smid, uqa.questionId))
                     {
                         var userQa = new UserQa()
                         {
                             UserQaid = Guid.NewGuid(),
-                            UserId = userQas.UserId,
+                            UserId = userQas.smid,
                             QuestionId = uqa.questionId,
                             Answer = uqa.answer
                         };
                         _context.UserQas.Add(userQa);
-                        _context.SaveChangesAsync();
+                        _context.SaveChanges();
                     }
                 }
 
-                if(_context.UserQas.Where(x => x.UserId.Equals(userQas.UserId)).Count() >= 3)
+                if(_context.UserQas.Where(x => x.UserId.Equals(userQas.smid)).Count() >= 3)
                 {
-                    var customer = _context.CustomerProfiles.Where(x => x.Smid.Equals(userQas.UserId)).FirstOrDefault();
+                    var customer = _context.CustomerProfiles.Where(x => x.Smid.Equals(userQas.smid)).FirstOrDefault();
                     customer.QuestionCompleted = true;
 
                     _context.Entry(customer).State = EntityState.Modified;
-                    _context.SaveChangesAsync();
+                    _context.SaveChanges();
                 }
 
                 return Ok(new ResponseModel2
