@@ -15,6 +15,10 @@ namespace AgencyBanking.Services
         WalletUser Authenticate(string username, string password, string DeviceIMEI);
         WalletUser Create(WalletUser user, string password);
         WalletUser GetById(string id);
+        WalletUser FindByPhone(string phone);
+        bool ResetPassword(string userName, string Password);
+        WalletUser FindByID(string smid);
+        string ChangePassword(string userName, string oldpassword, string newPassword);
 
         string errorMessage { get; set; }
         bool isSuccessful { get; set; }
@@ -174,6 +178,74 @@ namespace AgencyBanking.Services
             {
                 passwordSalt = hmac.Key;
                 passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            }
+        }
+
+        public WalletUser FindByPhone(string phone)
+        {
+            var user = _context.WalletUsers.Where(x => x.PhoneNumber == phone).FirstOrDefault();
+            return user;
+        } 
+        
+        public WalletUser FindByID(string smid)
+        {
+            var user = _context.WalletUsers.Find(smid);
+            return user;
+        }
+
+        public bool ResetPassword(string userName, string password)
+        {
+            try
+            {
+                var user = _context.WalletUsers.Where(x => x.UserName == userName).FirstOrDefault();
+                if (user == null)
+                {
+                    return false;
+                }
+                byte[] passwordHash, passwordSalt;
+                CreatePasswordHash(password, out passwordHash, out passwordSalt);
+                user.PasswordHash = passwordHash;
+                user.PasswordSalt = passwordSalt;
+
+                _context.WalletUsers.Update(user);
+                _context.SaveChanges();
+                Email.Send(user.FirstName + " " + user.LastName, user.EmailAddress, "BPay App Password Reset Successful", "You have successfully reset you KMN APP (KnowMyNeighbour) password");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        } 
+        
+        public string ChangePassword(string userID, string oldpassword, string newPassword)
+        {
+            try
+            {
+                var user = _context.WalletUsers.Where(x => x.Id == userID).FirstOrDefault();
+                if (user == null)
+                {
+                    return "User not found";
+                }
+
+                if (!VerifyPasswordHash(oldpassword, user.PasswordHash, user.PasswordSalt))
+                {
+                    return "Old Password is incorrect";
+                }
+
+                byte[] passwordHash, passwordSalt;
+                CreatePasswordHash(newPassword, out passwordHash, out passwordSalt);
+                user.PasswordHash = passwordHash;
+                user.PasswordSalt = passwordSalt;
+
+                _context.WalletUsers.Update(user);
+                _context.SaveChanges();
+                Email.Send(user.FirstName + " " + user.LastName, user.EmailAddress, "BPay App Password Reset Successful", "You have successfully reset you KMN APP (KnowMyNeighbour) password");
+                return "Success";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
             }
         }
 

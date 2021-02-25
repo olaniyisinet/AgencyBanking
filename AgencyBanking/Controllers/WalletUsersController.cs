@@ -73,7 +73,7 @@ namespace AgencyBanking.Controllers
                 {
                     return Ok(new ResponseModel2
                     {
-                        Data = _userService.errorMessage,
+                        Data = new CustomerDashboard(),
                         status = "false",
                         code = HttpContext.Response.StatusCode.ToString(),
                         message = "User registeration failed. " + _userService.errorMessage,
@@ -85,7 +85,7 @@ namespace AgencyBanking.Controllers
             {
                 return Ok(new ResponseModel2
                 {
-                    Data = ex.Message,
+                    Data = new CustomerDashboard(),
                     status = "false",
                     code = HttpContext.Response.StatusCode.ToString(),
                     message = "User registeration failed. " + ex.Message,
@@ -151,7 +151,7 @@ namespace AgencyBanking.Controllers
             {
                 return BadRequest(new ResponseModel2
                 {
-                    Data = ex.Message,
+                    Data = new CustomerDashboard(),
                     status = "false",
                     code = HttpContext.Response.StatusCode.ToString(),
                     message = "Login Failed. " + ex.Message
@@ -159,5 +159,47 @@ namespace AgencyBanking.Controllers
             }
 
         }
+
+        [AllowAnonymous]
+        [HttpPost("changeloginpassword")]
+        public IActionResult Changeloginpassword([FromBody] ChangeLoginPassword model)
+        {
+            try
+            {
+                string response = _userService.ChangePassword(model.userId, model.oldpassword, model.newpassword);
+                if ( response == "Success")
+                    {
+                        return Ok(new ResponseModel2
+                        {
+                            Data = null,
+                            status = "true",
+                            code = HttpContext.Response.StatusCode.ToString(),
+                            message = "Password Change Successful",
+                        });
+                    }
+                else
+                    {
+                    return Ok(new ResponseModel2
+                    {
+                        Data = null,
+                        status = "false",
+                        code = HttpContext.Response.StatusCode.ToString(),
+                        message = response,
+                    });
+                }
+         
+            }
+            catch (AppException ex)
+            {
+                return Ok(new ResponseModel2
+                {
+                    Data = null,
+                    status = "false",
+                    code = HttpContext.Response.StatusCode.ToString(),
+                    message = "Password change failed. " + ex.Message,
+                });
+            }
+        }
+
     }
 }

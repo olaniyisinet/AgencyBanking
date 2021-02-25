@@ -81,10 +81,7 @@ namespace AgencyBanking.Controllers
 
             if (UpdateWalletBalances(walletTrans.Id, walletTransfer.toacct, walletTransfer.amt, walletTransfer.SMID, walletTransfer.saveBeneficiary))
             {
-                //walletTrans.Status = "Successful";
-                //_context.Entry(walletTrans).State = EntityState.Modified;
-                //_context.SaveChanges();
-
+               
                 return Ok(new ResponseModel2
                 {
                     Data = "Transaction Successful",
@@ -152,6 +149,33 @@ namespace AgencyBanking.Controllers
                     return Ok(new ResponseModel2
                     {
                         Data = ExcludeNested.setBeneficiary(beneficiaries),
+                        status = "true",
+                        code = HttpContext.Response.StatusCode.ToString(),
+                        message = "Successful",
+                    });
+            }
+            catch (Exception ex)
+            {
+                return Ok(new ResponseModel2
+                {
+                    Data = ex.Message,
+                    status = "false",
+                    code = HttpContext.Response.StatusCode.ToString(),
+                    message = ex.Message,
+                });
+            }
+        }
+        
+        [HttpPost("addbeneficiary")]
+        public IActionResult addbeneficiary(AddBeneficiary request)
+        {
+            try
+            {
+                SaveBeneficiary(request.userId, request.beneficiaryAccountNumber, request.beneficiaryAccountName);
+
+                    return Ok(new ResponseModel2
+                    {
+                        Data = null,
                         status = "true",
                         code = HttpContext.Response.StatusCode.ToString(),
                         message = "Successful",
@@ -384,7 +408,7 @@ namespace AgencyBanking.Controllers
                 UserId = userId,
                 BeneficiaryAccountNumber = BeneficiaryAccountNumber,
                 BeneficiaryAccountName = BeneficiaryAccountName,
-                BeneficiaryBankName = "",
+                BeneficiaryBankName = "BelloKano",
                 BeneficiaryBankCode = ""
             };
 

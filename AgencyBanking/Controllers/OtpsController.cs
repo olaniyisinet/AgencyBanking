@@ -89,6 +89,21 @@ namespace AgencyBanking.Controllers
             }
         }
 
+        [HttpPost("addcustomererror")]
+        public IActionResult addcustomererror(CustomerActivities request)
+        {
+            var error = new CustomerError()
+            {
+                Screen = request.Screen,
+                Msg = request.Msg,
+                Email = request.Email
+            };
+            _context.CustomerErrors.Add(error);
+            _context.SaveChanges();
+
+            return Ok();
+        }
+
 
         private string generateCode()
         {

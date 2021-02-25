@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -54,5 +55,38 @@ namespace AgencyBanking.Models
         public string Nuban { get; set; }
         public string StartDate { get; set; }
         public string EndDate { get; set; }
+    }
+
+    public class AuthenticateModel
+    {
+        [Required]
+        public string PhoneNumber { get; set; }
+
+        [Required]
+        public string Password { get; set; }
+    }
+
+    public class ChangeLoginPassword
+    {
+        public string userId { get; set; }
+        public string oldpassword { get; set; }
+        public string newpassword { get; set; }
+    }
+
+    public class AddBeneficiary
+    {
+        public string userId { get; set; }
+        public string beneficiaryAccountNumber { get; set; }
+        public string beneficiaryAccountName { get; set; }
+        public string beneficiaryBankName { get; set; }
+        public string beneficiaryBankCode { get; set; }
+        public int AppVersion { get; set; }
+    }
+
+    public class CustomerActivities
+    {
+        public string Screen { get; set; }
+        public string Msg { get; set; }
+        public string Email { get; set; }
     }
 }

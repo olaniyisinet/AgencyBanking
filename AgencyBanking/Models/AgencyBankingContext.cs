@@ -20,6 +20,7 @@ namespace AgencyBanking.Models
         public virtual DbSet<ApiLogItem> ApiLogItems { get; set; }
         public virtual DbSet<Beneficiary> Beneficiaries { get; set; }
         public virtual DbSet<CustomerAccountSchema> CustomerAccountSchemas { get; set; }
+        public virtual DbSet<CustomerError> CustomerErrors { get; set; }
         public virtual DbSet<CustomerProfile> CustomerProfiles { get; set; }
         public virtual DbSet<Otp> Otps { get; set; }
         public virtual DbSet<Question> Questions { get; set; }
@@ -33,9 +34,9 @@ namespace AgencyBanking.Models
             if (!optionsBuilder.IsConfigured)
             {
                 //warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                //  optionsBuilder.UseSqlServer("Server=.\\SQLExpress;Database=AgencyBanking;Trusted_Connection=True;");
-
+                //   optionsBuilder.UseSqlServer("Server=.\\SQLExpress;Database=AgencyBanking;Trusted_Connection=True;");
                 optionsBuilder.UseSqlServer("Server=tcp:kmndb.database.windows.net,1433;Initial Catalog=AgencyBanking;Persist Security Info=False;User ID=kmnadmin;Password=Okot@2020KMN;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Trusted_Connection=True;");
+
             }
         }
 
@@ -96,6 +97,40 @@ namespace AgencyBanking.Models
                     .WithMany(p => p.CustomerAccountSchemas)
                     .HasForeignKey(d => d.UserId)
                     .HasConstraintName("FK_CustomerAccount_WalletUsers");
+            });
+
+            modelBuilder.Entity<CustomerError>(entity =>
+            {
+                entity.HasKey(e => e.Refid);
+
+                entity.ToTable("CustomerError");
+
+                entity.Property(e => e.Bvn)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("BVN");
+
+                entity.Property(e => e.DateCreated)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.Email)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.MobileNum)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Msg).IsUnicode(false);
+
+                entity.Property(e => e.Screen)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Stage)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
             });
 
             modelBuilder.Entity<CustomerProfile>(entity =>
