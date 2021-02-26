@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AgencyBanking.Models;
+using AgencyBanking.Helpers;
 
 namespace AgencyBanking.Controllers
 {
@@ -23,34 +24,52 @@ namespace AgencyBanking.Controllers
         // POST: api/Otps
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("GenerateOtp")]
-        public IActionResult GenerateOtp(GenerateOTPModel email)
+        public IActionResult GenerateOtp(GenerateOTPModel request)
         {
-            var otp = new Otp()
-            {
-                Otp1 = generateCode(),
-                Email = email.Email,
-                Phone = "",
-                DateCreated = DateTime.UtcNow,
-                ExpiryDate = DateTime.UtcNow.AddMinutes(5),
-                IsUsed = false
-            };
+            var user = _context.WalletUsers.Where(x => x.PhoneNumber.Equals(request.Nuban) || x.UserName.Equals(request.UserName)).FirstOrDefault();
 
-            _context.Otps.Add(otp);
-             _context.SaveChangesAsync();
-
-            return Ok(new ResponseModel2
+            if (user != null)
             {
-                Data = otp.Otp1,
-                status = "true",
-                code = HttpContext.Response.StatusCode.ToString(),
-                message = "OTP sent successfully. " +  otp.Otp1,
-            });
+                var otp = new Otp()
+                {
+                    Otp1 = generateCode(),
+                    Email = user.EmailAddress,
+                    Phone = user.PhoneNumber,
+                    DateCreated = DateTime.UtcNow,
+                    ExpiryDate = DateTime.UtcNow.AddMinutes(5),
+                    IsUsed = false
+                };
+
+                _context.Otps.Add(otp);
+                _context.SaveChangesAsync();
+
+                Email.Send(user.FirstName, user.EmailAddress, "BPay OTP", "Dear " + user.FirstName + ", <br> Complete your transaction with the OTP below: <br><br>" + otp.Otp1 + "<br> <br> OTP expires in 5 minutes. <br> <br> If you did not request this, kindly contact our customer care immediately.");
+
+                return Ok(new ResponseModel2
+                {
+                    Data = null,
+                    status = "true",
+                    code = HttpContext.Response.StatusCode.ToString(),
+                    message = "OTP sent successfully. ",
+                });
+            }
+            else
+            {
+                return Ok(new ResponseModel2
+                {
+                    Data = null,
+                    status = "false",
+                    code = HttpContext.Response.StatusCode.ToString(),
+                    message = "Failed. User not found",
+                });
+
+            }
         }
 
         [HttpPost("VerifyOtp")]
         public IActionResult VerifyOtp(VerifyOTPModel verifyotp)
         {
-            var otp = _context.Otps.Where(x => x.Otp1 == verifyotp.OTP && x.Email == verifyotp.Email).FirstOrDefault();
+            var otp = _context.Otps.Where(x => x.Otp1 == verifyotp.OTP && x.Phone == verifyotp.Nuban).FirstOrDefault();
 
             if (otp == null)
             {
@@ -66,10 +85,20 @@ namespace AgencyBanking.Controllers
             {
                 return Ok(new ResponseModel2
                 {
-                    Data = "Invalid Expired",
+                    Data = "OTP Expired",
                     status = "false",
                     code = HttpContext.Response.StatusCode.ToString(),
-                    message = "Invalid Expired",
+                    message = "OTP Expired",
+                });
+            }
+            else if (otp.IsUsed == true)
+            {
+                return Ok(new ResponseModel2
+                {
+                    Data = "OTP Used",
+                    status = "false",
+                    code = HttpContext.Response.StatusCode.ToString(),
+                    message = "OTP Used",
                 });
             }
             else
@@ -84,10 +113,11 @@ namespace AgencyBanking.Controllers
                     Data = "OTP Verified",
                     status = "true",
                     code = HttpContext.Response.StatusCode.ToString(),
-                    message = "OTP  Verified Successfully",
+                    message = "OTP Verified Successfully",
                 });
             }
         }
+
 
         [HttpPost("addcustomererror")]
         public IActionResult addcustomererror(CustomerActivities request)

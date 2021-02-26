@@ -11,15 +11,18 @@ namespace AgencyBanking.Models
     }
     public class GenerateOTPModel
     {
-        public string Email { get; set; }
+        public string Nuban { get; set; }
+        public string UserName { get; set; }
+        public bool IsWallet { get; set; }
+
     }
 
     public class VerifyOTPModel
     {
-        public string Email { get; set; }
+        public string Nuban { get; set; }
         public string OTP { get; set; }
-
     }
+
     public class WalletTransferRequest
     {
         public double? amt { get; set; }
@@ -88,5 +91,35 @@ namespace AgencyBanking.Models
         public string Screen { get; set; }
         public string Msg { get; set; }
         public string Email { get; set; }
+    }
+
+    public class VerifyUserQuestion
+    {
+        public string UserID { get; set; }
+        public string QuestionID { get; set; }
+        public string Answer { get; set; }
+    }
+
+    public class VerifyTransactionPin
+    {
+        public string Nuban { get; set; }
+        public string Pin { get; set; }
+    }
+
+    public class AddNewDevice
+    {
+        public string userId { get; set; }
+        public string deviceos { get; set; }
+        public string deviceimei { get; set; }
+        public string devicemake { get; set; }
+        public string devicemodel { get; set; }
+        public string ipaddress { get; set; }
+    }
+
+    public class ChangetransactionPin
+    {
+        public string userId { get; set; }
+        public string oldtransactionpin { get; set; }
+        public string newtransactionpin { get; set; }
     }
 }

@@ -136,6 +136,40 @@ namespace AgencyBanking.Controllers
 
         }
 
+        
+        [HttpPost("VerifyQuestionsByUserID")]
+        public IActionResult VerifyQuestionsByUserID(VerifyUserQuestion request)
+        {
+            var userQa = _context.UserQas.Where(x => x.UserId.Equals(request.UserID) && x.QuestionId.Equals(request.QuestionID)).FirstOrDefault();
+
+            if (userQa == null)
+            {
+                return NotFound();
+            }
+            else if (userQa.Answer != request.Answer)
+            {
+                return Ok(new ResponseModel2
+                {
+                    Data = null,
+                    status = "false",
+                    code = HttpContext.Response.StatusCode.ToString(),
+                    message = "Incorrect Answer",
+                });
+            }
+            else
+            {
+
+                return Ok(new ResponseModel2
+                {
+                    Data = userQa,
+                    status = "true",
+                    code = HttpContext.Response.StatusCode.ToString(),
+                    message = "Successful",
+                });
+            }
+
+        }
+
         private bool UserQaExists(string userid, Guid? questionId)
         {
             return _context.UserQas.Any(e => e.UserId == userid && e.QuestionId == questionId);

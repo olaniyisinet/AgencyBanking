@@ -139,7 +139,7 @@ namespace AgencyBanking.Services
             _context.WalletUsers.Add(user);
             _context.SaveChanges();
 
-            Email.Send(user.FirstName + " " + user.LastName, user.EmailAddress, "Agency Banking Successful Registration", "You have successfully registered on the Agency Banking APP");
+            Email.Send(profile.Fullname, user.EmailAddress, "BPay Agent Banking Successful Registration", "Dear " + profile.Fullname + ", <br> You have successfully registered on the BPay Agency Banking APP.");
 
             isSuccessful = true;
             return user;
