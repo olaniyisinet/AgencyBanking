@@ -201,5 +201,45 @@ namespace AgencyBanking.Controllers
             }
         }
 
+        [AllowAnonymous]
+        [HttpPost("resetPassword")]
+        public IActionResult ResetPassword([FromBody] string nuban)
+        {
+            try
+            {
+                if  (_userService.ResetPassword(nuban))
+                {
+                    return Ok(new ResponseModel2
+                    {
+                        Data = null,
+                        status = "true",
+                        code = HttpContext.Response.StatusCode.ToString(),
+                        message = "Password reset Successful",
+                    });
+                }
+                else
+                {
+                    return Ok(new ResponseModel2
+                    {
+                        Data = null,
+                        status = "false",
+                        code = HttpContext.Response.StatusCode.ToString(),
+                        message = "Reset failed",
+                    });
+                }
+
+            }
+            catch (AppException ex)
+            {
+                return Ok(new ResponseModel2
+                {
+                    Data = null,
+                    status = "false",
+                    code = HttpContext.Response.StatusCode.ToString(),
+                    message = "Password change failed. " + ex.Message,
+                });
+            }
+        }
+
     }
 }

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AgencyBanking.Models;
+using AgencyBanking.Helpers;
 
 namespace AgencyBanking.Controllers
 {
@@ -77,7 +78,7 @@ namespace AgencyBanking.Controllers
                             UserQaid = Guid.NewGuid(),
                             UserId = userQas.smid,
                             QuestionId = uqa.questionId,
-                            Answer = uqa.answer
+                            Answer =  Encryption.Encrypt(uqa.answer)
                         };
                         _context.UserQas.Add(userQa);
                         _context.SaveChanges();
@@ -113,8 +114,6 @@ namespace AgencyBanking.Controllers
             }
             }
 
-
-
         // GET: api/UserQas/5
         [HttpPost("GetQuestionByUserId")]
         public IActionResult GetQuestionByUserId(string UserId)
@@ -140,13 +139,19 @@ namespace AgencyBanking.Controllers
         [HttpPost("VerifyQuestionsByUserID")]
         public IActionResult VerifyQuestionsByUserID(VerifyUserQuestion request)
         {
-            var userQa = _context.UserQas.Where(x => x.UserId.Equals(request.UserID) && x.QuestionId.Equals(request.QuestionID)).FirstOrDefault();
+            var userQa = _context.UserQas.Where(x => x.UserId.Equals(request.UserID) && x.QuestionId.Equals(Guid.Parse(request.QuestionID))).FirstOrDefault();
 
             if (userQa == null)
             {
-                return NotFound();
+                return Ok(new ResponseModel2
+                {
+                    Data = null,
+                    status = "false",
+                    code = HttpContext.Response.StatusCode.ToString(),
+                    message = "Failed. Question Not Found",
+                });
             }
-            else if (userQa.Answer != request.Answer)
+            else if (userQa.Answer != Encryption.Encrypt(request.Answer))
             {
                 return Ok(new ResponseModel2
                 {
@@ -161,7 +166,7 @@ namespace AgencyBanking.Controllers
 
                 return Ok(new ResponseModel2
                 {
-                    Data = userQa,
+                    Data = null,
                     status = "true",
                     code = HttpContext.Response.StatusCode.ToString(),
                     message = "Successful",

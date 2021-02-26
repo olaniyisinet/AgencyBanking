@@ -16,7 +16,7 @@ namespace AgencyBanking.Services
         WalletUser Create(WalletUser user, string password);
         WalletUser GetById(string id);
         WalletUser FindByPhone(string phone);
-        bool ResetPassword(string userName, string Password);
+        bool ResetPassword(string Nuban);
         WalletUser FindByID(string smid);
         string ChangePassword(string userName, string oldpassword, string newPassword);
 
@@ -58,7 +58,7 @@ namespace AgencyBanking.Services
             //   throw new AppException("Device Not Registered with your profile");
 
             // authentication successful
-            Email.Send(user.FirstName + " " + user.LastName, user.EmailAddress, "Agency Banking Login Successful", "You have successfully log in to the Agency Banking APP");
+           // Email.Send(user.FirstName + " " + user.LastName, user.EmailAddress, "Agency Banking Login Successful", "You have successfully log in to the Agency Banking APP");
 
             return user;
         }
@@ -75,8 +75,8 @@ namespace AgencyBanking.Services
             if (_context.WalletUsers.Any(x => x.EmailAddress == user.EmailAddress))
                 throw new AppException("Email \"" + user.EmailAddress + "\" is already taken");
             
-            if (_context.WalletUsers.Any(x => x.Deviceimei == user.Deviceimei))
-                throw new AppException("Device already profiled with a user");
+           // if (_context.WalletUsers.Any(x => x.Deviceimei == user.Deviceimei))
+             //   throw new AppException("Device already profiled with a user");
 
             if (_context.WalletUsers.Any(x => x.PhoneNumber == user.PhoneNumber))
                 throw new AppException("Phone number already profiled with a user");
@@ -139,7 +139,7 @@ namespace AgencyBanking.Services
             _context.WalletUsers.Add(user);
             _context.SaveChanges();
 
-            Email.Send(profile.Fullname, user.EmailAddress, "BPay Agent Banking Successful Registration", "Dear " + profile.Fullname + ", <br> You have successfully registered on the BPay Agency Banking APP.");
+         //   Email.Send(profile.Fullname, user.EmailAddress, "BPay Agent Banking Successful Registration", "Dear " + profile.Fullname + ", <br> You have successfully registered on the BPay Agency Banking APP.");
 
             isSuccessful = true;
             return user;
@@ -193,23 +193,26 @@ namespace AgencyBanking.Services
             return user;
         }
 
-        public bool ResetPassword(string userName, string password)
+        public bool ResetPassword(string Nuban)
         {
             try
             {
-                var user = _context.WalletUsers.Where(x => x.UserName == userName).FirstOrDefault();
+                var user = _context.WalletUsers.Where(x => x.PhoneNumber == Nuban).FirstOrDefault();
                 if (user == null)
                 {
                     return false;
                 }
                 byte[] passwordHash, passwordSalt;
-                CreatePasswordHash(password, out passwordHash, out passwordSalt);
+                CreatePasswordHash("Bpay1234!", out passwordHash, out passwordSalt);
                 user.PasswordHash = passwordHash;
                 user.PasswordSalt = passwordSalt;
 
                 _context.WalletUsers.Update(user);
                 _context.SaveChanges();
-                Email.Send(user.FirstName + " " + user.LastName, user.EmailAddress, "BPay App Password Reset Successful", "You have successfully reset you KMN APP (KnowMyNeighbour) password");
+
+                 Email.Send(user.FirstName + " " + user.LastName, user.EmailAddress, "BPay App Password Reset Successful", "You have successfully reset you BetterPay password." +
+                    " Log in with the password below . <br> <br> New Password: BPay1234! <br> <br> Change your password when you successfully log in");
+
                 return true;
             }
             catch (Exception ex)
