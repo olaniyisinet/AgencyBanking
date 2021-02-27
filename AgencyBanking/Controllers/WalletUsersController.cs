@@ -102,14 +102,24 @@ namespace AgencyBanking.Controllers
                 var user = _userService.Authenticate(model.SMUsername, model.SMPassword, model.LogDetails.DeviceIMEI);
 
                 if (user == null)
-                    return BadRequest(new ResponseModel2
+                    return Ok(new ResponseModel2
                     {
-                        Data = "Login failed",
+                        Data = null,
                         status = "false",
                         code = HttpContext.Response.StatusCode.ToString(),
                         message = "Invalid username or password",
                     });
 
+                if(model.AppVersion  != 1.1)
+                {
+                    return Ok(new ResponseModel2
+                    {
+                        Data = null,
+                        status = "false",
+                        code ="APV001",
+                        message = "APV001. App is outdated. Download Latest Version",
+                    });
+                }
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
                 var tokenDescriptor = new SecurityTokenDescriptor
