@@ -110,7 +110,7 @@ namespace AgencyBanking.Controllers
                         message = "Invalid username or password",
                     });
 
-                if(model.AppVersion  != 1.1)
+                if(model.AppVersion  != 11)
                 {
                     return Ok(new ResponseModel2
                     {

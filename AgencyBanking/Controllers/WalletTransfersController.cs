@@ -339,8 +339,8 @@ namespace AgencyBanking.Controllers
                 _context.Entry(sender).State = EntityState.Modified;
                 _context.SaveChanges();
 
-                Email.Send(sender.FullName, sender.Email, "Debit Alert on Agency Banking", "Dear " + sender.FullName + ", <br> You have successfully sent NGN" + amount + " from the Agency Banking App wallet to a friend. \n Your new available balance is "
-                    + sender.Availablebalance + ".\n Log in to your wallet to confirm your balance. ");
+                //Email.Send(sender.FullName, sender.Email, "Debit Alert on Agency Banking", "Dear " + sender.FullName + ", <br> You have successfully sent NGN" + amount + " from the Agency Banking App wallet to a friend. \n Your new available balance is "
+                //    + sender.Availablebalance + ".\n Log in to your wallet to confirm your balance. ");
             }
             else
             {
@@ -369,8 +369,8 @@ namespace AgencyBanking.Controllers
                         SaveBeneficiary(senderID, Nuban, customer.FullName);
                     }
 
-                    Email.Send(customer.FullName, customer.Email, "Credit Alert on BPay Banking", "Dear "+ customer.FullName+ ", <br> You have successfully recieved NGN" + amount + " on the Agency Banking App. \n Your new available balance is " + customer.Availablebalance
-                      + ".\n Log in to your wallet to confirm your balance. ");
+                 //   Email.Send(customer.FullName, customer.Email, "Credit Alert on BPay Banking", "Dear "+ customer.FullName+ ", <br> You have successfully recieved NGN" + amount + " on the Agency Banking App. \n Your new available balance is " + customer.Availablebalance
+                 //     + ".\n Log in to your wallet to confirm your balance. ");
 
                     return true;
                 }

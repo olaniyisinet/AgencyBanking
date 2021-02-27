@@ -44,7 +44,7 @@ namespace AgencyBanking.Services
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
                 return null;
 
-            var user = _context.WalletUsers.Include(i => i.CustomerProfiles).Include(w => w.WalletInfos).SingleOrDefault(x => x.UserName == username);
+            var user = _context.WalletUsers.Include(i => i.CustomerProfiles).Include(w => w.WalletInfos).Include(b => b.Beneficiaries).SingleOrDefault(x => x.UserName == username);
 
             // check if username exists
             if (user == null)
