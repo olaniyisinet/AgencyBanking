@@ -43,14 +43,19 @@ namespace AgencyBanking.Controllers
                 _context.Otps.Add(otp);
                 _context.SaveChangesAsync();
 
-                Email.Send(user.FirstName, user.EmailAddress, "BPay OTP", "Dear " + user.FirstName + ", <br> Complete your transaction with the OTP below: <br><br>" + otp.Otp1 + "<br> <br> OTP expires in 5 minutes. <br> <br> If you did not request this, kindly contact our customer care immediately.");
+                try
+                {
+                    Email.Send(user.FirstName, user.EmailAddress, "BPay OTP", "Dear " + user.FirstName + ", <br> Complete your transaction with the OTP below: <br><br>" + otp.Otp1 + "<br> <br> OTP expires in 5 minutes. <br> <br> If you did not request this, kindly contact our customer care immediately.");
+                }catch(Exception ex)
+                {
 
+                }
                 return Ok(new ResponseModel2
                 {
                     Data = null,
                     status = "true",
                     code = HttpContext.Response.StatusCode.ToString(),
-                    message = "OTP sent successfully. ",
+                    message = "OTP sent successfully. "+ otp.Otp1,
                 });
             }
             else

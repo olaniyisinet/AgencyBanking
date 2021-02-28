@@ -24,6 +24,7 @@ namespace AgencyBanking.Models
         public virtual DbSet<CustomerProfile> CustomerProfiles { get; set; }
         public virtual DbSet<Otp> Otps { get; set; }
         public virtual DbSet<Question> Questions { get; set; }
+        public virtual DbSet<UserDeviceInfo> UserDeviceInfos { get; set; }
         public virtual DbSet<UserQa> UserQas { get; set; }
         public virtual DbSet<WalletInfo> WalletInfos { get; set; }
         public virtual DbSet<WalletTransfer> WalletTransfers { get; set; }
@@ -34,9 +35,8 @@ namespace AgencyBanking.Models
             if (!optionsBuilder.IsConfigured)
             {
                 //warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                //   optionsBuilder.UseSqlServer("Server=.\\SQLExpress;Database=AgencyBanking;Trusted_Connection=True;");
                 optionsBuilder.UseSqlServer("Server=tcp:kmndb.database.windows.net,1433;Initial Catalog=AgencyBanking;Persist Security Info=False;User ID=kmnadmin;Password=Okot@2020KMN;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;Trusted_Connection=True;");
-
+//                optionsBuilder.UseSqlServer("Server=.\\SQLExpress;Database=AgencyBanking;Trusted_Connection=True;");
             }
         }
 
@@ -56,6 +56,8 @@ namespace AgencyBanking.Models
             modelBuilder.Entity<Beneficiary>(entity =>
             {
                 entity.ToTable("Beneficiary");
+
+                entity.Property(e => e.BeneficiaryId).ValueGeneratedNever();
 
                 entity.Property(e => e.BeneficiaryAccountName).HasMaxLength(50);
 
@@ -220,6 +222,56 @@ namespace AgencyBanking.Models
                     .HasMaxLength(1000)
                     .IsUnicode(false)
                     .HasColumnName("Question");
+            });
+
+            modelBuilder.Entity<UserDeviceInfo>(entity =>
+            {
+                entity.HasKey(e => e.DeviceId);
+
+                entity.ToTable("UserDeviceInfo");
+
+                entity.Property(e => e.DeviceId).ValueGeneratedNever();
+
+                entity.Property(e => e.DateCreated)
+                    .HasColumnType("datetime")
+                    .HasDefaultValueSql("(getdate())");
+
+                entity.Property(e => e.HardwareImei)
+                    .HasMaxLength(1000)
+                    .IsUnicode(false)
+                    .HasColumnName("HardwareIMEI");
+
+                entity.Property(e => e.Imei)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("IMEI");
+
+                entity.Property(e => e.Ipaddress)
+                    .HasMaxLength(1000)
+                    .IsUnicode(false)
+                    .HasColumnName("IPAddress");
+
+                entity.Property(e => e.IsCurrent).HasDefaultValueSql("((0))");
+
+                entity.Property(e => e.Make)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Model)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.Osversion)
+                    .HasMaxLength(100)
+                    .IsUnicode(false)
+                    .HasColumnName("OSVersion");
+
+                entity.Property(e => e.UserId).HasMaxLength(50);
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.UserDeviceInfos)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK_UserDeviceInfo_WalletUsers");
             });
 
             modelBuilder.Entity<UserQa>(entity =>

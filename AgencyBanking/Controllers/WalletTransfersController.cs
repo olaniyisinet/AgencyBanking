@@ -405,6 +405,7 @@ namespace AgencyBanking.Controllers
 
             var beneficiary = new Beneficiary()
             {
+                BeneficiaryId = Guid.NewGuid(),
                 UserId = userId,
                 BeneficiaryAccountNumber = BeneficiaryAccountNumber,
                 BeneficiaryAccountName = BeneficiaryAccountName,

@@ -83,7 +83,7 @@ namespace AgencyBanking.Models
 
     public class BeneficiaryResponse
     {
-        public int BeneficiaryId { get; set; }
+        public Guid BeneficiaryId { get; set; }
         public string UserId { get; set; }
         public string BeneficiaryAccountNumber { get; set; }
         public string BeneficiaryAccountName { get; set; }
