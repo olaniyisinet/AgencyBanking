@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using AgencyBanking.Helpers;
 using AgencyBanking.Models;
@@ -202,16 +203,25 @@ namespace AgencyBanking.Services
                 {
                     return false;
                 }
+
+                var newPassword = GetRandomPassword(6);
                 byte[] passwordHash, passwordSalt;
-                CreatePasswordHash("Bpay1234!", out passwordHash, out passwordSalt);
+                CreatePasswordHash(newPassword, out passwordHash, out passwordSalt);
                 user.PasswordHash = passwordHash;
                 user.PasswordSalt = passwordSalt;
 
                 _context.WalletUsers.Update(user);
                 _context.SaveChanges();
 
-                 Email.Send(user.FirstName + " " + user.LastName, user.EmailAddress, "BPay App Password Reset Successful", "You have successfully reset you BetterPay password." +
-                    " Log in with the password below . <br> <br> New Password: BPay1234! <br> <br> Change your password when you successfully log in");
+                try
+                {
+                    Email.Send(user.FirstName + " " + user.LastName, user.EmailAddress, "BPay App Password Reset Successful", "You have successfully reset you BetterPay password." +
+                       " Log in with the password below . <br> <br> New Password: " + newPassword + "<br> <br> Make sure you change your password when you successfully log in");
+                }
+                catch
+                {
+
+                }
 
                 return true;
             }
@@ -250,6 +260,14 @@ namespace AgencyBanking.Services
             {
                 return ex.Message;
             }
+        }
+
+        private static string GetRandomPassword(int length)
+        {
+            byte[] rgb = new byte[length];
+            RNGCryptoServiceProvider rngCrypt = new RNGCryptoServiceProvider();
+            rngCrypt.GetBytes(rgb);
+            return Convert.ToBase64String(rgb);
         }
 
     }

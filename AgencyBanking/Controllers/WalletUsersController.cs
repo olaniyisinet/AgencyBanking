@@ -213,11 +213,11 @@ namespace AgencyBanking.Controllers
 
         [AllowAnonymous]
         [HttpPost("resetPassword")]
-        public IActionResult ResetPassword([FromBody] string nuban)
+        public IActionResult ResetPassword([FromBody] resetPasswordModel request)
         {
             try
             {
-                if  (_userService.ResetPassword(nuban))
+                if  (_userService.ResetPassword(request.Nuban))
                 {
                     return Ok(new ResponseModel2
                     {

@@ -38,7 +38,12 @@ namespace AgencyBanking.Models
 
     public class getWalletModel
     {
-        public string mobile { get; set; }
+        public string Mobile { get; set; }
+    }
+     
+    public class resetPasswordModel
+    {
+        public string Nuban { get; set; }
     }
 
     public class getBeneficiary

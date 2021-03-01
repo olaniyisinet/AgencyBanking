@@ -110,7 +110,7 @@ namespace AgencyBanking.Controllers
         public IActionResult GetWallet(getWalletModel request)
         {
             
-            var walletinfo = _context.WalletInfos.Where(x => x.Mobile.Equals(request.mobile));
+            var walletinfo = _context.WalletInfos.Where(x => x.Mobile.Equals(request.Mobile));
 
             try
             {
