@@ -1,4 +1,5 @@
-﻿using AgencyBanking.Models;
+﻿using AgencyBanking.Helpers;
+using AgencyBanking.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +24,7 @@ namespace AgencyBanking.Controllers
         [HttpPost("VerifyTransationPin")]
         public IActionResult VerifyTransationPin(VerifyTransactionPin request)
         {
-            if (_context.WalletUsers.Any(x => x.PhoneNumber.Equals(request.Nuban) && x.Transactionpin.Equals(request.Pin)))
+            if (_context.WalletUsers.Any(x => x.PhoneNumber.Equals(request.Nuban) && x.TransPin.Equals(Encryption.Encrypt(request.Pin))))
             {
                 return Ok(new ResponseModel2
                 {
@@ -47,19 +48,20 @@ namespace AgencyBanking.Controllers
 
 
         [HttpPost("changetransactionpin")]
-        public IActionResult changetransactionpin(ChangetransactionPin request)
+        public IActionResult Changetransactionpin(ChangetransactionPin request)
         {
             var user = _context.WalletUsers.Where(x => x.Id.Equals(request.userId) && x.Transactionpin.Equals(request.oldtransactionpin)).FirstOrDefault();
 
             if(user != null)
             {
-                user.Transactionpin = request.newtransactionpin;
+                user.Transactionpin = " ";
+                user.TransPin = Encryption.Encrypt(request.newtransactionpin);
                 _context.Entry(user).State = EntityState.Modified;
                 _context.SaveChanges();
 
                 return Ok(new ResponseModel2
                 {
-                    Data = "Pin Chnaged",
+                    Data = "Pin Changed",
                     status = "true",
                     code = HttpContext.Response.StatusCode.ToString(),
                     message = "Pin Changed Successfully",
@@ -77,5 +79,5 @@ namespace AgencyBanking.Controllers
                 });
             }
         }
-    }
-}
+        }
+        }

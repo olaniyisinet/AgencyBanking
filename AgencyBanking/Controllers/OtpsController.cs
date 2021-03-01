@@ -24,7 +24,7 @@ namespace AgencyBanking.Controllers
         // POST: api/Otps
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("GenerateOtp")]
-        public IActionResult GenerateOtp(GenerateOTPModel request)
+        public async Task<IActionResult> GenerateOtpAsync(GenerateOTPModel request)
         {
             if(request == null)
             {
@@ -51,11 +51,11 @@ namespace AgencyBanking.Controllers
                 };
 
                 _context.Otps.Add(otp);
-                _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
 
                 try
                 {
-                    Email.Send(user.FirstName, user.EmailAddress, "BPay OTP", "Dear " + user.FirstName + ", <br> Complete your transaction with the OTP below: <br><br>" + otp.Otp1 + "<br> <br> OTP expires in 5 minutes. <br> <br> If you did not request this, kindly contact our customer care immediately.");
+                 await   Email.SendUsingRapidApiAsync(user.FirstName, user.EmailAddress, "BPay OTP", "Dear " + user.FirstName + ", <br> Complete your transaction with the OTP below: <br><br>" + otp.Otp1 + "<br> <br> OTP expires in 5 minutes. <br> <br> If you did not request this, kindly contact our customer care immediately.");
                 }catch(Exception ex)
                 {
 

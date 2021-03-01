@@ -305,7 +305,7 @@ namespace AgencyBanking.Controllers
 
         private bool VerifyPin(string pin, string smid)
         {
-            return _context.WalletUsers.Any(e => e.Id == smid && e.Transactionpin == pin);
+            return _context.WalletUsers.Any(e => e.Id == smid && e.TransPin== Encryption.Encrypt(pin));
         }
 
         private bool VerifySenderBalance(string smid, double? amount)
@@ -410,7 +410,7 @@ namespace AgencyBanking.Controllers
                 BeneficiaryAccountNumber = BeneficiaryAccountNumber,
                 BeneficiaryAccountName = BeneficiaryAccountName,
                 BeneficiaryBankName = "BelloKano",
-                BeneficiaryBankCode = ""
+                BeneficiaryBankCode = "999566"
             };
 
             try

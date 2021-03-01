@@ -36,6 +36,7 @@ namespace AgencyBanking.Models
         public string Devicemodel { get; set; }
         public string Ipaddress { get; set; }
         public string Referralcode { get; set; }
+        public string TransPin { get; set; }
 
         public virtual ICollection<Beneficiary> Beneficiaries { get; set; }
         public virtual ICollection<CustomerAccountSchema> CustomerAccountSchemas { get; set; }

@@ -88,6 +88,8 @@ namespace AgencyBanking.Services
 
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
+            user.TransPin = Encryption.Encrypt(user.Transactionpin);
+            user.Transactionpin = "";
 
             if (user.HardwareImei.Length > 20)
             {
