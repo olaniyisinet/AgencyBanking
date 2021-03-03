@@ -28,8 +28,8 @@ namespace AgencyBanking.Helpers
                 _apiLogService = apiLogService;
 
                 var request = httpContext.Request;
-               // if (request.Path.StartsWithSegments(new PathString("/api")))
-                //{
+                if (request.Path.StartsWithSegments(new PathString("/api")))
+                {
                     var stopWatch = Stopwatch.StartNew();
                     var requestTime = DateTime.UtcNow;
                     var requestBodyContent = await ReadRequestBody(request);
@@ -54,12 +54,12 @@ namespace AgencyBanking.Helpers
                             requestBodyContent,
                             responseBodyContent);
                     }
-              //  }
-                //else
-                //{
-                  //  await _next(httpContext);
-                //}
+                }
+                else
+            {
+                await _next(httpContext);
             }
+        }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
