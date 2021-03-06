@@ -96,6 +96,7 @@ namespace AgencyBanking
             });
 
             services.AddScoped<IUserService, UserService>();
+            services.AddSingleton(Configuration);
 
         }
 

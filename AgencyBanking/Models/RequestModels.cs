@@ -127,4 +127,15 @@ namespace AgencyBanking.Models
         public string oldtransactionpin { get; set; }
         public string newtransactionpin { get; set; }
     }
+
+    public class Adddevice
+    {
+        public string UserName { get; set; }
+        public string Make { get; set; }
+        public string Model { get; set; }
+        public string DeviceOS { get; set; }
+        public string DeviceIMEI { get; set; }
+        public string HardwareIMEI { get; set; }
+        public string Ipaddress { get; set; }
+    }
 }

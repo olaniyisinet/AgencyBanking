@@ -6,6 +6,10 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using MailKit.Net.Smtp;
 using MimeKit;
+using RestSharp;
+using RestSharp.Authenticators;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 
 namespace AgencyBanking.Helpers
 {
@@ -16,7 +20,7 @@ namespace AgencyBanking.Helpers
 
             MimeMessage message = new MimeMessage();
 
-            MailboxAddress from = new MailboxAddress("BPay App", "noreply@kmn.com");
+            MailboxAddress from = new MailboxAddress("BPay App", "bpay@bellokano.com");
             message.From.Add(from);
 
             MailboxAddress to = new MailboxAddress(Receiver, ReceiverEmail);
@@ -33,8 +37,8 @@ namespace AgencyBanking.Helpers
             message.Body = bodyBuilder.ToMessageBody();
 
             SmtpClient client = new SmtpClient();
-            client.Connect("smtp.gmail.com", 587, false);//, false);
-            client.Authenticate("kmn.knowmyneighbour@gmail.com", "Okot@2020KMN");
+            client.Connect("bellokano.com", 465);//, false);
+            client.Authenticate("bpay@bellokano.com", "secured@Bpay");
 
             client.Send(message);
             client.Disconnect(true);
@@ -43,36 +47,20 @@ namespace AgencyBanking.Helpers
             return "";
         }
 
-        public static async Task SendUsingRapidApiAsync(string Receiver, string ReceiverEmail, string Subject, string Body)
+        public static async Task SendGrid()
         {
-            var client = new HttpClient();
-            var request = new HttpRequestMessage
+            var apiKey = System.Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
+            var client = new SendGridClient("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");
+            var msg = new SendGridMessage()
             {
-                Method = HttpMethod.Post,
-                RequestUri = new Uri("https://rapidprod-sendgrid-v1.p.rapidapi.com/mail/send"),
-                Headers =
-    {
-        { "x-rapidapi-key", "97549e4f58msh98aacc0b972d42ap133b4djsna2dfacdefc3e" },
-        { "x-rapidapi-host", "rapidprod-sendgrid-v1.p.rapidapi.com" },
-    },
-                Content = new StringContent("{\n    \"personalizations\": [\n  {\n    \"to\": [\n  {\n                " +
-                "    \"email\": \""+ReceiverEmail+"\"\n                }\n            ],\n   " +
-                "         \"subject\": \""+Subject+"\"\n        }\n    ],\n    \"from\": {\n      " +
-                "  \"email\": \"noreply@bpay.com\"\n    },\n    \"content\": [\n        {\n  " +
-                "          \"type\": \"text/html\",\n            \"value\": \""+Body+"\"\n        }\n    ]\n}")
-                {
-                    Headers =
-        {
-            ContentType = new MediaTypeHeaderValue("application/json")
-        }
-                }
+                From = new EmailAddress("kmn.knowmyneighbor@gmail.com", "B Pay App"),
+                Subject = "Hello World from the SendGrid CSharp SDK!",
+                PlainTextContent = "Hello, Email!",
+                HtmlContent = "<strong>Hello, Email!</strong>"
             };
-            using (var response = await client.SendAsync(request))
-            {
-                response.EnsureSuccessStatusCode();
-                var body = await response.Content.ReadAsStringAsync();
-                Console.WriteLine(body);
-            }
+            msg.AddTo(new EmailAddress("olaniyiolatunji@gmail.com", "Test User"));
+            var response = await client.SendEmailAsync(msg);
+          //  return response;
         }
     }
 }

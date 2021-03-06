@@ -32,7 +32,6 @@ namespace AgencyBanking.Controllers
             _appSettings = appSettings.Value;
         }
 
-
         [AllowAnonymous]
         [HttpPost("OnboardWalletCustomer")]
         public IActionResult OnboardWalletCustomer([FromBody] CreateWalletRequest model)
@@ -110,16 +109,17 @@ namespace AgencyBanking.Controllers
                         message = "Invalid username or password",
                     });
 
-                if(model.AppVersion  != 11)
+                if (model.AppVersion != 11)
                 {
                     return Ok(new ResponseModel2
                     {
                         Data = null,
                         status = "false",
-                        code ="APV001",
+                        code = "APV001",
                         message = "APV001. App is outdated. Download Latest Version",
                     });
                 }
+
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
                 var tokenDescriptor = new SecurityTokenDescriptor
@@ -138,7 +138,7 @@ namespace AgencyBanking.Controllers
                 {
                     // Accounts = new CustomerAccount { AccountInfo = ExcludeNested.setAccounts( user.CustomerAccountSchemas.ToList()) },
                     Accounts = ExcludeNested.setAccounts(user.CustomerAccountSchemas.ToList()),
-                    Beneficiaries = ExcludeNested.setBeneficiary( user.Beneficiaries.ToList())
+                    Beneficiaries = ExcludeNested.setBeneficiary(user.Beneficiaries.ToList())
                 };
 
                 var dashbaord = new CustomerDashboard
@@ -150,24 +150,35 @@ namespace AgencyBanking.Controllers
 
                 return Ok(new LoginResponseModel
                 {
-                  //  token = tokenString,
+                    //  token = tokenString,
                     Data = dashbaord,
                     status = "true",
                     code = HttpContext.Response.StatusCode.ToString(),
                     message = "Login successful",
-                }) ;
+                });
             }
             catch (Exception ex)
             {
-                return BadRequest(new ResponseModel2
+                if (ex.Message == "Device Not Registered with your Profile")
                 {
-                    Data = new CustomerDashboard(),
-                    status = "false",
-                    code = HttpContext.Response.StatusCode.ToString(),
-                    message = "Login Failed. " + ex.Message
-                });
+                    return BadRequest(new ResponseModel2
+                    {
+                        Data = new CustomerDashboard(),
+                        status = "false",
+                        code = "DEV004",
+                        message = "Login Failed. " + ex.Message
+                    });
+                }
+                else {
+                    return BadRequest(new ResponseModel2
+                    {
+                        Data = new CustomerDashboard(),
+                        status = "false",
+                        code = HttpContext.Response.StatusCode.ToString(),
+                        message = "Login Failed. " + ex.Message
+                    });
+                }
             }
-
         }
 
         [AllowAnonymous]
@@ -251,5 +262,32 @@ namespace AgencyBanking.Controllers
             }
         }
 
+        [AllowAnonymous]
+        [HttpPost("adduserdevice")]
+        public IActionResult AddUserDevice([FromBody] Adddevice request)
+        {
+            try {
+                var device = _userService.AddUserDevice(request);
+                return Ok(new ResponseModel2
+                {
+                    Data = null,
+                    status = "true",
+                    code = HttpContext.Response.StatusCode.ToString(),
+                    message = "Device Added Successfully",
+                });
+            }
+            catch(Exception ex)
+            {
+                return Ok(new ResponseModel2
+                {
+                    Data = null,
+                    status = "false",
+                    code = HttpContext.Response.StatusCode.ToString(),
+                    message =  ex.Message,
+                });
+            }
+
+
+    }
     }
 }

@@ -55,7 +55,7 @@ namespace AgencyBanking.Controllers
 
                 try
                 {
-                 await   Email.SendUsingRapidApiAsync(user.FirstName, user.EmailAddress, "BPay OTP", "Dear " + user.FirstName + ", <br> Complete your transaction with the OTP below: <br><br>" + otp.Otp1 + "<br> <br> OTP expires in 5 minutes. <br> <br> If you did not request this, kindly contact our customer care immediately.");
+                      Email.Send(user.FirstName, user.EmailAddress, "BPay OTP", "Dear " + user.FirstName + ", <br> Complete your transaction with the OTP below: <br><br>" + otp.Otp1 + "<br> <br> OTP expires in 5 minutes. <br> <br> If you did not request this, kindly contact our customer care immediately.");
                 }catch(Exception ex)
                 {
 
@@ -145,7 +145,6 @@ namespace AgencyBanking.Controllers
             }
         }
 
-
         [HttpPost("addcustomererror")]
         public IActionResult addcustomererror(CustomerActivities request)
         {
@@ -160,7 +159,6 @@ namespace AgencyBanking.Controllers
 
             return Ok();
         }
-
 
         private string generateCode()
         {

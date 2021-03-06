@@ -20,6 +20,7 @@ namespace AgencyBanking.Services
         bool ResetPassword(string Nuban);
         WalletUser FindByID(string smid);
         string ChangePassword(string userName, string oldpassword, string newPassword);
+        UserDeviceInfo AddUserDevice(Adddevice request);
 
         string errorMessage { get; set; }
         bool isSuccessful { get; set; }
@@ -55,8 +56,8 @@ namespace AgencyBanking.Services
             if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
                 return null;
 
-          //  if (user.Deviceimei != DeviceIMEI)
-            //   throw new AppException("Device Not Registered with your profile");
+            if (!_context.UserDeviceInfos.Any(x => x.UserId.Equals(user.Id) && x.Imei.Equals(DeviceIMEI) && x.IsCurrent.Equals(true)))
+               throw new AppException("Device Not Registered with your Profile");
 
             // authentication successful
            // Email.Send(user.FirstName + " " + user.LastName, user.EmailAddress, "Agency Banking Login Successful", "You have successfully log in to the Agency Banking APP");
@@ -77,7 +78,7 @@ namespace AgencyBanking.Services
                 throw new AppException("Email \"" + user.EmailAddress + "\" is already taken");
             
            // if (_context.WalletUsers.Any(x => x.Deviceimei == user.Deviceimei))
-             //   throw new AppException("Device already profiled with a user");
+             //   throw new AppException("Device already profiled with this user");
 
             if (_context.WalletUsers.Any(x => x.PhoneNumber == user.PhoneNumber))
                 throw new AppException("Phone number already profiled with a user");
@@ -136,6 +137,19 @@ namespace AgencyBanking.Services
                 Rmmobile = ""
             };
 
+            var deviceInfo = new UserDeviceInfo
+            {
+                DeviceId = Guid.NewGuid(),
+                Imei = user.Deviceimei,
+                Osversion = user.Deviceos,
+                Make = user.Devicemake,
+                Model = user.Devicemodel,
+                Ipaddress = user.Ipaddress,
+                IsCurrent = true,
+                HardwareImei = user.HardwareImei
+            };
+
+            user.UserDeviceInfos.Add(deviceInfo);
             user.WalletInfos.Add(wallet);
             user.CustomerProfiles.Add(profile);
 
@@ -264,6 +278,59 @@ namespace AgencyBanking.Services
             }
         }
 
+        public UserDeviceInfo AddUserDevice(Adddevice request)
+        {
+            var user = _context.WalletUsers.Where(x => x.UserName.Equals(request.UserName));
+            if(!user.Any())
+                throw new AppException("User Not Found");
+
+            var userdevice = _context.UserDeviceInfos.Where(x => x.UserId.Equals(user.FirstOrDefault().Id));
+
+             var previousDevice = userdevice.Where(x => x.Imei != request.DeviceIMEI && x.IsCurrent == true).FirstOrDefault();
+             var SameIMEIpreviousDevice = userdevice.Where(x => x.Imei == request.DeviceIMEI && x.IsCurrent == false).FirstOrDefault();
+             var SameIMEICurrentDevice = userdevice.Where(x => x.Imei == request.DeviceIMEI && x.IsCurrent == true).FirstOrDefault();
+
+            if (previousDevice != null)
+            {
+                previousDevice.IsCurrent = false;
+                _context.UserDeviceInfos.Update(previousDevice);
+                _context.SaveChanges();
+            }
+            if (SameIMEIpreviousDevice != null)
+            {
+                SameIMEIpreviousDevice.IsCurrent = true;
+                SameIMEIpreviousDevice.Ipaddress = request.Ipaddress;
+                _context.UserDeviceInfos.Update(SameIMEIpreviousDevice);
+                _context.SaveChanges();
+
+                return SameIMEIpreviousDevice;
+            }
+
+             if(SameIMEICurrentDevice != null)
+               {
+                        return SameIMEICurrentDevice;
+               }
+  
+
+            var deviceInfo = new UserDeviceInfo
+            {
+                DeviceId = Guid.NewGuid(),
+                UserId = user.FirstOrDefault().Id,
+                Imei = request.DeviceIMEI,
+                Osversion = request.DeviceOS,
+                Make = request.Make,
+                Model = request.Model,
+                Ipaddress = request.Ipaddress,
+                IsCurrent = true,
+                HardwareImei = request.HardwareIMEI
+            };
+
+            _context.UserDeviceInfos.Add(deviceInfo);
+            _context.SaveChanges();
+
+            return deviceInfo;
+        }
+
         private static string GetRandomPassword(int length)
         {
             byte[] rgb = new byte[length];
@@ -271,6 +338,5 @@ namespace AgencyBanking.Services
             rngCrypt.GetBytes(rgb);
             return Convert.ToBase64String(rgb);
         }
-
     }
 }
