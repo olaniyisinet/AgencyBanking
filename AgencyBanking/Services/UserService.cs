@@ -92,9 +92,9 @@ namespace AgencyBanking.Services
             user.TransPin = Encryption.Encrypt(user.Transactionpin);
             user.Transactionpin = "";
 
-            if (user.HardwareImei.Length > 20)
+            if (user.HardwareImei.Length > 50)
             {
-                user.HardwareImei = user.HardwareImei.Substring(0, 20);
+                user.HardwareImei = user.HardwareImei.Substring(0, 50);
             }
             //create wallet info
             var wallet = new WalletInfo
