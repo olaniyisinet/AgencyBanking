@@ -94,7 +94,7 @@ namespace AgencyBanking.Controllers
             {
                 walletTrans.Status = "Failed";
                 _context.Entry(walletTransfer).State = EntityState.Modified;
-                _context.SaveChangesAsync();
+                _context.SaveChanges();
 
                 return Ok(new ResponseModel2
                 {

@@ -21,6 +21,7 @@ namespace AgencyBanking.Services
         WalletUser FindByID(string smid);
         string ChangePassword(string userName, string oldpassword, string newPassword);
         UserDeviceInfo AddUserDevice(Adddevice request);
+        bool UpdateProfile(UserProfileUpdate request);
 
         string errorMessage { get; set; }
         bool isSuccessful { get; set; }
@@ -160,6 +161,29 @@ namespace AgencyBanking.Services
 
             isSuccessful = true;
             return user;
+        }
+
+        public bool UpdateProfile(UserProfileUpdate request)
+        {
+            var user = _context.WalletUsers.Find(request.SMID.ToString());
+
+            if(user != null)
+            {
+                return false;
+            }
+
+            user.WalletInfos.FirstOrDefault().FirstName = request.FirstName;
+            user.WalletInfos.FirstOrDefault().Lastname = request.LastName;
+            user.WalletInfos.FirstOrDefault().Gender = request.Gender;
+            user.WalletInfos.FirstOrDefault().FullName = request.FirstName + " " + request.LastName;
+         
+            user.CustomerProfiles.FirstOrDefault().Fullname = request.FirstName + " " + request.LastName;
+            user.CustomerProfiles.FirstOrDefault().DateOfBirth = request.DateOfBirth;
+
+            _context.Entry(user).State = EntityState.Modified;
+            _context.SaveChanges();
+
+            return true;
         }
 
         public WalletUser GetById(string id)

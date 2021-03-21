@@ -138,4 +138,13 @@ namespace AgencyBanking.Models
         public string HardwareIMEI { get; set; }
         public string Ipaddress { get; set; }
     }
+
+    public class UserProfileUpdate
+    {
+        public Guid SMID { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Gender { get; set; }
+        public DateTime? DateOfBirth { get; set; }
+    }
 }

@@ -289,5 +289,46 @@ namespace AgencyBanking.Controllers
 
 
     }
+
+        [AllowAnonymous]
+        [HttpPost("updateuserprofile")]
+        public IActionResult UpdateUserProfile([FromBody] UserProfileUpdate request)
+        {
+            try
+            {
+                if (_userService.UpdateProfile(request))
+                {
+                    return Ok(new ResponseModel2
+                    {
+                        Data = null,
+                        status = "true",
+                        code = HttpContext.Response.StatusCode.ToString(),
+                        message = "Profile Updated Successfully",
+                    });
+                }
+                else
+                {
+                    return Ok(new ResponseModel2
+                    {
+                        Data = null,
+                        status = "false",
+                        code = HttpContext.Response.StatusCode.ToString(),
+                        message = "Profile update failed",
+                    });
+                }
+
+            }
+            catch (AppException ex)
+            {
+                return Ok(new ResponseModel2
+                {
+                    Data = null,
+                    status = "false",
+                    code = HttpContext.Response.StatusCode.ToString(),
+                    message = "Profile update failed. " + ex.Message,
+                });
+            }
+        }
+
     }
 }
