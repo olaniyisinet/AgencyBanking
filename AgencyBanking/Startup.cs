@@ -32,10 +32,10 @@ namespace AgencyBanking
         {
          //  var connection = @"Server=.\SQLEXPRESS;Database=AgencyBanking;Trusted_Connection=True;ConnectRetryCount=0";
 
-           var connection = @"Server=tcp:kmndb.database.windows.net,1433;Initial Catalog=AgencyBanking;Persist Security Info=False;User ID=kmnadmin;Password=Okot@2020KMN;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;ConnectRetryCount=0"; 
+           var connection = @"server=localhost;database=agencybanking;user=root;password=mysql"; 
 
-            services.AddDbContext<AgencyBankingContext>(options => options.UseSqlServer(connection));
-            services.AddDbContext<AgencyBankingContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<AgencyBankingContext>(options => options.UseMySQL(connection));
+          //  services.AddDbContext<AgencyBankingContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddTransient<ApiLogService>();
 
             services.AddCors();
