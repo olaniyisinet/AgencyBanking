@@ -1,0 +1,4 @@
+Scaffold-DbContext "server=localhost;database=agencybanking;user=root;password=mysql" MySql.EntityFrameworkCore -OutputDir sakila -f
+
+
+Scaffold-DbContext "server=localhost;database=agencybanking;user=root;password=mysql" "Pomelo.EntityFrameworkCore.MySql" -o Models -f
