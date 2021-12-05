@@ -1,0 +1,472 @@
+USE `master`;
+ 
+/* SQLINES DEMO *** abase [AgencyBanking]    Script Date: 05-Dec-21 6:21:05 PM ******/
+CREATE DATABASE [AgencyBanking]
+ CONTAINMENT = NONE
+ ON  PRIMARY 
+( NAME = N'AgencyBanking', FILENAME = N'C:Program FilesMicrosoft SQL ServerMSSQL14.SQLEXPRESSMSSQLDATAAgencyBanking.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+ LOG ON 
+( NAME = N'AgencyBanking_log', FILENAME = N'C:Program FilesMicrosoft SQL ServerMSSQL14.SQLEXPRESSMSSQLDATAAgencyBanking_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+GO
+ALTER DATABASE [AgencyBanking] SET COMPATIBILITY_LEVEL = 140
+GO
+IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
+then
+CALL `AgencyBanking`.`dbo`.`sp_fulltext_database` v_action; = 'enable'
+end if;
+ 
+ALTER DATABASE [AgencyBanking] SET ANSI_NULL_DEFAULT OFF 
+ 
+ALTER DATABASE [AgencyBanking] /* SET ANSI_NULLS OFF */ 
+ 
+ALTER DATABASE [AgencyBanking] /* SET ANSI_PADDING OFF */ 
+ 
+ALTER DATABASE [AgencyBanking] SET ANSI_WARNINGS OFF 
+ 
+ALTER DATABASE [AgencyBanking] SET ARITHABORT OFF 
+ 
+ALTER DATABASE [AgencyBanking] SET AUTO_CLOSE OFF 
+ 
+ALTER DATABASE [AgencyBanking] SET AUTO_SHRINK OFF 
+ 
+ALTER DATABASE [AgencyBanking] SET AUTO_UPDATE_STATISTICS ON 
+ 
+ALTER DATABASE [AgencyBanking] SET CURSOR_CLOSE_ON_COMMIT OFF 
+ 
+ALTER DATABASE [AgencyBanking] SET CURSOR_DEFAULT  GLOBAL 
+ 
+ALTER DATABASE [AgencyBanking] SET CONCAT_NULL_YIELDS_NULL OFF 
+ 
+ALTER DATABASE [AgencyBanking] SET NUMERIC_ROUNDABORT OFF 
+ 
+ALTER DATABASE [AgencyBanking] /* SET QUOTED_IDENTIFIER OFF */ 
+ 
+ALTER DATABASE [AgencyBanking] SET RECURSIVE_TRIGGERS OFF 
+ 
+ALTER DATABASE [AgencyBanking] SET  DISABLE_BROKER 
+GO
+ALTER DATABASE [AgencyBanking] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+ 
+ALTER DATABASE [AgencyBanking] SET DATE_CORRELATION_OPTIMIZATION OFF 
+ 
+ALTER DATABASE [AgencyBanking] SET TRUSTWORTHY OFF 
+ 
+ALTER DATABASE [AgencyBanking] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+ 
+ALTER DATABASE [AgencyBanking] SET PARAMETERIZATION SIMPLE 
+ 
+ALTER DATABASE [AgencyBanking] SET READ_COMMITTED_SNAPSHOT OFF 
+ 
+ALTER DATABASE [AgencyBanking] SET HONOR_BROKER_PRIORITY OFF 
+ 
+ALTER DATABASE [AgencyBanking] SET RECOVERY SIMPLE 
+ 
+ALTER DATABASE [AgencyBanking] SET  MULTI_USER 
+ 
+ALTER DATABASE [AgencyBanking] SET PAGE_VERIFY CHECKSUM  
+ 
+ALTER DATABASE [AgencyBanking] SET DB_CHAINING OFF 
+ 
+ALTER DATABASE [AgencyBanking] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
+ 
+ALTER DATABASE [AgencyBanking] SET TARGET_RECOVERY_TIME = 60 SECONDS 
+ 
+ALTER DATABASE [AgencyBanking] SET DELAYED_DURABILITY = DISABLED 
+ 
+ALTER DATABASE [AgencyBanking] SET QUERY_STORE = OFF
+ 
+USE `AgencyBanking`;
+ 
+/* SQLINES DEMO *** le [dbo].[ CustomerAccountSchema]    Script Date: 05-Dec-21 6:21:05 PM ******/
+/* SET ANSI_NULLS ON */
+ 
+/* SET QUOTED_IDENTIFIER ON */
+ 
+-- SQLINES LICENSE FOR EVALUATION USE ONLY
+CREATE TABLE  CustomerAccountSchema(
+	`Id` int AUTO_INCREMENT NOT NULL,
+	`UserId` nvarchar(50) NULL,
+	`AccountGroup` nvarchar(50) NULL,
+	`AccountType` nvarchar(50) NULL,
+	`Name` nvarchar(50) NULL,
+	`Balance` Double NULL,
+	`AccountNumber` nvarchar(50) NULL,
+	`Currency` nvarchar(10) NOT NULL,
+ CONSTRAINT `PK_CustomerAccount` PRIMARY KEY 
+(
+	`Id` ASC
+) 
+);
+/* SQLINES DEMO *** le [dbo].[ApiLogItem]    Script Date: 05-Dec-21 6:21:05 PM ******/
+/* SET ANSI_NULLS ON */
+ 
+/* SET QUOTED_IDENTIFIER ON */
+ 
+-- SQLINES LICENSE FOR EVALUATION USE ONLY
+CREATE TABLE ApiLogItem(
+	`Id` int AUTO_INCREMENT NOT NULL,
+	`RequestTime` Datetime(6) NULL,
+	`ResponseMillis` decimal(18, 0) NULL,
+	`StatusCode` int NULL,
+	`Method` nvarchar(100) NULL,
+	`Path` Longtext NULL,
+	`QueryString` Longtext NULL,
+	`RequestBody` Longtext NULL,
+	`ResponseBody` Longtext NULL,
+ CONSTRAINT `PK_ApiLogItem` PRIMARY KEY 
+(
+	`Id` ASC
+) 
+);
+/* SQLINES DEMO *** le [dbo].[Beneficiary]    Script Date: 05-Dec-21 6:21:05 PM ******/
+/* SET ANSI_NULLS ON */
+ 
+/* SET QUOTED_IDENTIFIER ON */
+ 
+-- SQLINES LICENSE FOR EVALUATION USE ONLY
+CREATE TABLE Beneficiary(
+	`BeneficiaryId` Char(36) NOT NULL,
+	`UserId` nvarchar(50) NULL,
+	`BeneficiaryAccountNumber` nvarchar(50) NULL,
+	`BeneficiaryAccountName` nvarchar(50) NULL,
+	`BeneficiaryBankName` nvarchar(50) NULL,
+	`BeneficiaryBankCode` nvarchar(20) NULL,
+	`DateCreated` Datetime(6) NULL DEFAULT now(3),
+ CONSTRAINT `PK_Beneficiary` PRIMARY KEY 
+(
+	`BeneficiaryId` ASC
+) 
+);
+/* SQLINES DEMO *** le [dbo].[CustomerError]    Script Date: 05-Dec-21 6:21:05 PM ******/
+/* SET ANSI_NULLS ON */
+ 
+/* SET QUOTED_IDENTIFIER ON */
+ 
+-- SQLINES LICENSE FOR EVALUATION USE ONLY
+CREATE TABLE CustomerError(
+	`Refid` bigint AUTO_INCREMENT NOT NULL,
+	`MobileNum` varchar(50) NULL,
+	`BVN` varchar(50) NULL,
+	`Msg` Longtext NULL,
+	`Stage` varchar(50) NULL,
+	`DateCreated` datetime(3) NULL DEFAULT now(3),
+	`Email` varchar(50) NULL,
+	`Screen` varchar(50) NULL,
+ CONSTRAINT `PK_CustomerError` PRIMARY KEY 
+(
+	`Refid` ASC
+) 
+);
+/* SQLINES DEMO *** le [dbo].[CustomerProfile]    Script Date: 05-Dec-21 6:21:05 PM ******/
+/* SET ANSI_NULLS ON */
+ 
+/* SET QUOTED_IDENTIFIER ON */
+ 
+-- SQLINES LICENSE FOR EVALUATION USE ONLY
+CREATE TABLE CustomerProfile(
+	`CustomerID` int AUTO_INCREMENT NOT NULL,
+	`SMID` nvarchar(50) NULL,
+	`Username` nvarchar(50) NULL,
+	`Email` nvarchar(50) NULL,
+	`Address` nvarchar(50) NULL,
+	`BVN` nvarchar(50) NULL,
+	`PhoneNumber` nvarchar(50) NULL,
+	`Fullname` nvarchar(100) NULL,
+	`QuestionCompleted` Tinyint NULL,
+	`DeviceInfoExist` Tinyint NULL,
+	`IsAgent` Tinyint NULL,
+	`HasPryAccount` Tinyint NULL,
+	`PryAccount` nvarchar(50) NULL,
+	`ReferralCode` nvarchar(50) NULL,
+	`IsWalletOnly` Tinyint NULL,
+	`AgentCode` nvarchar(50) NULL,
+	`LastLogin` nvarchar(50) NULL,
+	`DateOfBirth` Datetime(6) NULL,
+	`IsDefaultPassword` Tinyint NULL,
+	`RMDaoCode` nvarchar(50) NULL,
+	`RMName` nvarchar(50) NULL,
+	`RMEmail` nvarchar(50) NULL,
+	`RMMobile` nvarchar(50) NULL,
+ CONSTRAINT `PK_CustomerProfile` PRIMARY KEY 
+(
+	`CustomerID` ASC
+) 
+);
+/* SQLINES DEMO *** le [dbo].[OTP]    Script Date: 05-Dec-21 6:21:05 PM ******/
+/* SET ANSI_NULLS ON */
+ 
+/* SET QUOTED_IDENTIFIER ON */
+ 
+-- SQLINES LICENSE FOR EVALUATION USE ONLY
+CREATE TABLE OTP(
+	`Id` int AUTO_INCREMENT NOT NULL,
+	`OTP` nvarchar(50) NULL,
+	`Email` nvarchar(50) NULL,
+	`Phone` nvarchar(50) NULL,
+	`DateCreated` Datetime(6) NULL,
+	`ExpiryDate` Datetime(6) NULL,
+	`IsUsed` Tinyint NULL,
+ CONSTRAINT `PK_OTP` PRIMARY KEY 
+(
+	`Id` ASC
+) 
+);
+/* SQLINES DEMO *** le [dbo].[Question]    Script Date: 05-Dec-21 6:21:05 PM ******/
+/* SET ANSI_NULLS ON */
+ 
+/* SET QUOTED_IDENTIFIER ON */
+ 
+-- SQLINES LICENSE FOR EVALUATION USE ONLY
+CREATE TABLE Question(
+	`QuestionId` Char(36) NOT NULL,
+	`Question` varchar(1000) NULL,
+	`CreatedBy` varchar(100) NULL,
+	`DateCreated` datetime(3) NULL DEFAULT now(3),
+ CONSTRAINT `PK_Question` PRIMARY KEY 
+(
+	`QuestionId` ASC
+) 
+);
+/* SQLINES DEMO *** le [dbo].[UserDeviceInfo]    Script Date: 05-Dec-21 6:21:05 PM ******/
+/* SET ANSI_NULLS ON */
+ 
+/* SET QUOTED_IDENTIFIER ON */
+ 
+-- SQLINES LICENSE FOR EVALUATION USE ONLY
+CREATE TABLE UserDeviceInfo(
+	`DeviceId` Char(36) NOT NULL,
+	`UserId` nvarchar(50) NULL,
+	`IMEI` varchar(100) NULL,
+	`OSVersion` varchar(100) NULL,
+	`Make` varchar(100) NULL,
+	`Model` varchar(100) NULL,
+	`IPAddress` varchar(1000) NULL,
+	`IsCurrent` Tinyint NULL DEFAULT 0,
+	`DateCreated` datetime(3) NULL DEFAULT now(3),
+	`HardwareIMEI` varchar(1000) NULL,
+ CONSTRAINT `PK_UserDeviceInfo` PRIMARY KEY 
+(
+	`DeviceId` ASC
+) 
+);
+/* SQLINES DEMO *** le [dbo].[UserQA]    Script Date: 05-Dec-21 6:21:05 PM ******/
+/* SET ANSI_NULLS ON */
+ 
+/* SET QUOTED_IDENTIFIER ON */
+ 
+-- SQLINES LICENSE FOR EVALUATION USE ONLY
+CREATE TABLE UserQA(
+	`UserQAId` Char(36) NOT NULL,
+	`UserId` nvarchar(50) NULL,
+	`QuestionId` Char(36) NULL,
+	`Answer` varchar(1000) NULL,
+	`DateCreated` datetime(3) NULL DEFAULT now(3),
+ CONSTRAINT `PK_UserQA` PRIMARY KEY 
+(
+	`UserQAId` ASC
+) 
+);
+/* SQLINES DEMO *** le [dbo].[WalletInfo]    Script Date: 05-Dec-21 6:21:05 PM ******/
+/* SET ANSI_NULLS ON */
+ 
+/* SET QUOTED_IDENTIFIER ON */
+ 
+-- SQLINES LICENSE FOR EVALUATION USE ONLY
+CREATE TABLE WalletInfo(
+	`Id` int AUTO_INCREMENT NOT NULL,
+	`Customerid` nvarchar(50) NULL,
+	`FirstName` nvarchar(50) NULL,
+	`Lastname` nvarchar(50) NULL,
+	`Email` nvarchar(50) NULL,
+	`Mobile` nvarchar(50) NULL,
+	`Nuban` nvarchar(50) NULL,
+	`Availablebalance` Double NULL,
+	`Phone` nvarchar(50) NULL,
+	`Gender` nvarchar(10) NULL,
+	`FullName` nvarchar(50) NULL,
+	`CURRENCYCODE` nvarchar(10) NULL,
+ CONSTRAINT `PK_WalletInfo` PRIMARY KEY 
+(
+	`Id` ASC
+) 
+);
+/* SQLINES DEMO *** le [dbo].[WalletTransfers]    Script Date: 05-Dec-21 6:21:05 PM ******/
+/* SET ANSI_NULLS ON */
+ 
+/* SET QUOTED_IDENTIFIER ON */
+ 
+-- SQLINES LICENSE FOR EVALUATION USE ONLY
+CREATE TABLE WalletTransfers(
+	`Id` Char(36) NOT NULL,
+	`Amount` Double NULL,
+	`SMID` nvarchar(50) NOT NULL,
+	`Category` nvarchar(50) NULL,
+	`CurrencyCode` nvarchar(50) NULL,
+	`ToAcct` nvarchar(50) NULL,
+	`FromAct` nvarchar(50) NULL,
+	`Remarks` nvarchar(100) NULL,
+	`DateCreated` Datetime(6) NULL DEFAULT now(3),
+	`Status` nvarchar(50) NULL,
+	`BalanceAfterDebit` Double NULL,
+	`BalanceAfterCredit` Double NULL,
+	`Balance` Double NULL,
+ CONSTRAINT `PK_WalletTransfers` PRIMARY KEY 
+(
+	`Id` ASC
+) 
+);
+/* SQLINES DEMO *** le [dbo].[WalletUsers]    Script Date: 05-Dec-21 6:21:05 PM ******/
+/* SET ANSI_NULLS ON */
+ 
+/* SET QUOTED_IDENTIFIER ON */
+ 
+-- SQLINES LICENSE FOR EVALUATION USE ONLY
+CREATE TABLE WalletUsers(
+	`Id` nvarchar(50) NOT NULL,
+	`FirstName` nvarchar(50) NULL,
+	`LastName` nvarchar(50) NULL,
+	`UserName` nvarchar(50) NULL,
+	`PasswordHash` Longblob NULL,
+	`PasswordSalt` Longblob NULL,
+	`EmailAddress` nvarchar(50) NULL,
+	`PhoneNumber` Longtext NULL,
+	`Gender` nvarchar(20) NULL,
+	`DateOfBirth` date NULL,
+	`Transactionpin` nvarchar(10) NULL,
+	`Deviceimei` nvarchar(50) NULL,
+	`HardwareIMEI` nvarchar(50) NULL,
+	`Deviceos` nvarchar(50) NULL,
+	`Devicemake` nvarchar(50) NULL,
+	`Devicemodel` nvarchar(50) NULL,
+	`Ipaddress` nvarchar(50) NULL,
+	`Referralcode` nvarchar(50) NULL,
+	`TransPin` nvarchar(1000) NULL,
+ CONSTRAINT `PK_WalletUsers` PRIMARY KEY 
+(
+	`Id` ASC
+) 
+);
+/* Moved to CREATE TABLE
+ALTER TABLE Beneficiary ADD  CONSTRAINT `DF_Beneficiary_DateCreated`  DEFAULT (now(3)) FOR `DateCreated`
+GO */
+/* Moved to CREATE TABLE
+ALTER TABLE CustomerError ADD  CONSTRAINT `DF_CustomerError_DateCreated`  DEFAULT (now(3)) FOR `DateCreated`
+GO */
+/* Moved to CREATE TABLE
+ALTER TABLE Question ADD  CONSTRAINT `DF_Question_DateCreated`  DEFAULT (now(3)) FOR `DateCreated`
+GO */
+/* Moved to CREATE TABLE
+ALTER TABLE UserDeviceInfo ADD  CONSTRAINT `DF_UserDeviceInfo_IsCurrent`  DEFAULT ((0)) FOR `IsCurrent`
+GO */
+/* Moved to CREATE TABLE
+ALTER TABLE UserDeviceInfo ADD  CONSTRAINT `DF_UserDeviceInfo_DateCreated`  DEFAULT (now(3)) FOR `DateCreated`
+GO */
+/* Moved to CREATE TABLE
+ALTER TABLE UserQA ADD  CONSTRAINT `DF_UserQA_DateCreated`  DEFAULT (now(3)) FOR `DateCreated`
+GO */
+/* Moved to CREATE TABLE
+ALTER TABLE WalletTransfers ADD  CONSTRAINT `DF_WalletTransfers_DateCreated`  DEFAULT (now(3)) FOR `DateCreated`
+GO */
+ALTER TABLE  CustomerAccountSchema  ADD  CONSTRAINT `FK_CustomerAccount_WalletUsers` FOREIGN KEY(`UserId`)
+REFERENCES WalletUsers (`Id`);
+ 
+ALTER TABLE  CustomerAccountSchema CHECK CONSTRAINT [FK_CustomerAccount_WalletUsers];
+ 
+ALTER TABLE Beneficiary  ADD  CONSTRAINT `FK_Beneficiary_WalletUsers` FOREIGN KEY(`UserId`)
+REFERENCES WalletUsers (`Id`);
+ 
+ALTER TABLE Beneficiary CHECK CONSTRAINT [FK_Beneficiary_WalletUsers];
+ 
+ALTER TABLE CustomerProfile  ADD  CONSTRAINT `FK_CustomerProfile_WalletUsers` FOREIGN KEY(`SMID`)
+REFERENCES WalletUsers (`Id`);
+ 
+ALTER TABLE CustomerProfile CHECK CONSTRAINT [FK_CustomerProfile_WalletUsers];
+ 
+ALTER TABLE UserDeviceInfo  ADD  CONSTRAINT `FK_UserDeviceInfo_WalletUsers` FOREIGN KEY(`UserId`)
+REFERENCES WalletUsers (`Id`);
+ 
+ALTER TABLE UserDeviceInfo CHECK CONSTRAINT [FK_UserDeviceInfo_WalletUsers];
+ 
+ALTER TABLE UserQA  ADD  CONSTRAINT `FK_UserQA_Question` FOREIGN KEY(`QuestionId`)
+REFERENCES Question (`QuestionId`);
+ 
+ALTER TABLE UserQA CHECK CONSTRAINT [FK_UserQA_Question];
+ 
+ALTER TABLE UserQA  ADD  CONSTRAINT `FK_UserQA_WalletUsers` FOREIGN KEY(`UserId`)
+REFERENCES WalletUsers (`Id`);
+ 
+ALTER TABLE UserQA CHECK CONSTRAINT [FK_UserQA_WalletUsers];
+ 
+ALTER TABLE WalletInfo  ADD  CONSTRAINT `FK_WalletInfo_WalletUsers` FOREIGN KEY(`Customerid`)
+REFERENCES WalletUsers (`Id`);
+ 
+ALTER TABLE WalletInfo CHECK CONSTRAINT [FK_WalletInfo_WalletUsers];
+ 
+ALTER TABLE WalletTransfers  ADD  CONSTRAINT `FK_WalletTransfers_WalletUsers` FOREIGN KEY(`SMID`)
+REFERENCES WalletUsers (`Id`);
+ 
+ALTER TABLE WalletTransfers CHECK CONSTRAINT [FK_WalletTransfers_WalletUsers];
+ 
+USE `master`;
+ 
+ALTER DATABASE [AgencyBanking] SET  READ_WRITE 
+ 
+
+
+
+
+USE `AgencyBanking`;
+ 
+INSERT WalletUsers (`Id`, `FirstName`, `LastName`, `UserName`, `PasswordHash`, `PasswordSalt`, `EmailAddress`, `PhoneNumber`, `Gender`, `DateOfBirth`, `Transactionpin`, `Deviceimei`, `HardwareIMEI`, `Deviceos`, `Devicemake`, `Devicemodel`, `Ipaddress`, `Referralcode`, `TransPin`) VALUES (N'4982fb08-8d6f-4492-a8a1-10e7fc89532d', N'olaniyi', N'olatunji', N'olaola', 0x70BDD3CE98C174323D0D9E302CCBE9FCDBEB1840E1733AAE25A5949FA8BE15F8095D8EFABB7C3948404032CF690BF15AAF4B41ACB1DB6EF8322868683E3B46FB, 0x441B907BC5AAB14781C2FAFBEBCC6B08E39D06498135093D6D190237F7982411E07D56D3E887B919E037F9C2F1533C4F28B278FF4C7059B60CF0DD0ED4602E5A15ECBF6CF2A4CA51C233B2780E4431D9EBCDBEDC93C565E61AAA2EECFDDFE28012C4D5FE83107624D9C7C89E5DD33EC68AF272F50B0C66EACA76C6D0AC1D79D0, N'olaniyiolatunji@gmail.com', N'081736722', N'male', CAST(N'2021-01-25' AS Date), N'0000', N'1234567890', N'1234567890', N'android', N'samsung', N'note20', N'1.1.1.1', N'test', NULL);
+ 
+INSERT WalletUsers (`Id`, `FirstName`, `LastName`, `UserName`, `PasswordHash`, `PasswordSalt`, `EmailAddress`, `PhoneNumber`, `Gender`, `DateOfBirth`, `Transactionpin`, `Deviceimei`, `HardwareIMEI`, `Deviceos`, `Devicemake`, `Devicemodel`, `Ipaddress`, `Referralcode`, `TransPin`) VALUES (N'4b294180-1989-42ee-a4e2-6289de9a3bb1', N'olaniyi', N'olatunji', N'olaola2', 0xEADEA8BEE0A71DEF45BBEDF11A07AF66F7CE41B5014FADA24452C6D53E10C2685687C8129330F2C92CA9BB5140A6143264B5E0B9329499CEE2A1790B77ECAE9E, 0x60AC2575B4A29D4CF9A72E0821F6E42337783212D4AF6FD77B08C0372E423C4B4AFB5335B16750B599AEA990DD02E8BCC3A7B6284ACDFE72970047DDFB646BD955B0F29CA5637CF3AC43043E688237E6C2AB93311C0D7A90357D7E97DE35A242206940387E55A8B14A488C40DCF065B78E473013F85528E191CBC43E085806C9, N'olaniyiolatunji2@gmail.com', N'081736722', N'male', CAST(N'2021-01-25' AS Date), N'0000', N'1234567892', N'1234567890', N'android', N'samsung', N'note20', N'1.1.1.1', N'test', NULL);
+ 
+INSERT WalletUsers (`Id`, `FirstName`, `LastName`, `UserName`, `PasswordHash`, `PasswordSalt`, `EmailAddress`, `PhoneNumber`, `Gender`, `DateOfBirth`, `Transactionpin`, `Deviceimei`, `HardwareIMEI`, `Deviceos`, `Devicemake`, `Devicemodel`, `Ipaddress`, `Referralcode`, `TransPin`) VALUES (N'62dd8167-08de-455d-a5ac-8479f350cf0f', N'ololade', N'ololade', N'technololy', 0x1CF37FF4217D1C4B707F18317A80FDEF653F951DE6074FF2873A0B1451F5A813F24210187B5505CFB3D2152397BBEE15D66383AF81CEC0B7536C7D90CE49CEDC, 0x9136E5ED021EDE0F48A9D8D3857A149B14648E2AC832A08531C21F74D1BBC4E1386A3CD2311281A43A13B1D7859CEACC476BD7092B74CC4F58A5173940017CBD70A264E330325B0C446440BEA8612C046BEF9166ED2035468073C81FF2A0A30ECD39F641564CE19B8DD18FCDF61655428F7DD14C9261F27E74934C22CB108A1A, N'loladeking@gmail.com', N'07036605597', N'Male', CAST(N'1986-12-26' AS Date), N'1234', N'627454082aaf46fb', N'Google', N'11', N'Google', N'sdk_gphone_x86_arm', N'10.0.2.16; 10.0.2.15;', N'string', NULL);
+ 
+INSERT WalletUsers (`Id`, `FirstName`, `LastName`, `UserName`, `PasswordHash`, `PasswordSalt`, `EmailAddress`, `PhoneNumber`, `Gender`, `DateOfBirth`, `Transactionpin`, `Deviceimei`, `HardwareIMEI`, `Deviceos`, `Devicemake`, `Devicemodel`, `Ipaddress`, `Referralcode`, `TransPin`) VALUES (N'6578dfd4-2616-437f-93a0-ab0000ef6647', N'olaniyi', N'olatunji', N'olaola6', 0x575B51B6BDC5F4AC43178AB641B746BC68DDC0D3C53CF76974F4B2C8FF0FB7B90390795C3E9925CC998340D633A075857A4AD741ADC1AA65429E294F0966511B, 0x919C5CAAC6F45497579D0730EE10781D60F3EBDFBE2F583B0910BB61AD657EB6293ADBC471AE7BE4B750ADF8217E88F51E51F3495062F3609FA0D1164BF39A7A036568124A1ED6A2EE07CBB3DA171464C589E65631E3DEE50A6E4BF65E837846780CF281B052F221E2DBE7911344EB653056C71C2BBBC99413ED79892CBB956B, N'olaniyiolatunji6@gmail.com', N'081736722', N'male', CAST(N'2021-01-25' AS Date), N'0000', N'1234567898', N'1234567898', N'android', N'samsung', N'note20', N'1.1.1.1', N'test', NULL);
+ 
+INSERT WalletUsers (`Id`, `FirstName`, `LastName`, `UserName`, `PasswordHash`, `PasswordSalt`, `EmailAddress`, `PhoneNumber`, `Gender`, `DateOfBirth`, `Transactionpin`, `Deviceimei`, `HardwareIMEI`, `Deviceos`, `Devicemake`, `Devicemodel`, `Ipaddress`, `Referralcode`, `TransPin`) VALUES (N'7f0ac989-7510-4f86-96b3-5250134870f1', N'olaniyi', N'olatunji', N'olaola3', 0x2D1B87047CEDAEB8FF787E62D714936D690806F194E87C122F7F1908C5307EFDE1E3DE08300BF45966FCF9557030BD1D996FE40B130DDA2C2D498CF7BB65D912, 0x35DD2476A3F92935BBF9EB93F936D22B589A8D845467123C2E3725F555C1078CB328471210A1E4933C0A6BDCC6328CF6690C16E15B6F7AEE9B320A525B7BD8236C1EF07B62BB637D1D10B812D2033BB43238A45A13CF4C2EC3086694D7E90E755D0B43C53A0DDA6FD2048FD98E14A39D143D0D84F54B8FB24337FD2E0F26FB4A, N'olaniyiolatunji3@gmail.com', N'081736722', N'male', CAST(N'2021-01-25' AS Date), N'0000', N'1234567894', N'1234567890', N'android', N'samsung', N'note20', N'1.1.1.1', N'test', NULL);
+ 
+INSERT WalletUsers (`Id`, `FirstName`, `LastName`, `UserName`, `PasswordHash`, `PasswordSalt`, `EmailAddress`, `PhoneNumber`, `Gender`, `DateOfBirth`, `Transactionpin`, `Deviceimei`, `HardwareIMEI`, `Deviceos`, `Devicemake`, `Devicemodel`, `Ipaddress`, `Referralcode`, `TransPin`) VALUES (N'aaad46e0-d39d-437a-9349-10765b54d527', N'olaniyi', N'olatunji', N'olaola9', 0x226DA374634DB010203D3B237075BFB17692FDEF90B5A124FB89DC95846169871005B89524D17FCFFAE03EABC2C99DB314E0B9E9F62B312D77048DE41A64575F, 0x877E5B48FD937955DBBBDF3A1F57C2E38DA1C1685BADE01002EC29F1B18424F12F72BBEAB116229DA93C3AE73401B6F07021CD40EC0FB60D744790979D943C1358FB99ED930ABC9DEF3AB99973D7DA7FF2FBD516C5CC9937AAF970C2577602E38342A7E13E581C1D3DBE4EE6E86CC3DB7790B68D212F7446F0D043CD02C13D10, N'olaniyiolatunji1@gmail.com', N'081736722', N'male', CAST(N'2021-01-25' AS Date), N'0000', N'12345678902', N'1234567890', N'android', N'samsung', N'note20', N'1.1.1.1', N'test', NULL);
+ 
+INSERT WalletUsers (`Id`, `FirstName`, `LastName`, `UserName`, `PasswordHash`, `PasswordSalt`, `EmailAddress`, `PhoneNumber`, `Gender`, `DateOfBirth`, `Transactionpin`, `Deviceimei`, `HardwareIMEI`, `Deviceos`, `Devicemake`, `Devicemodel`, `Ipaddress`, `Referralcode`, `TransPin`) VALUES (N'b7a62deb-695b-4f05-8336-841c6dffce73', N'olaniyi', N'olatunji', N'olaniyiola2', 0x6E60B8DAE4B5AF3DB897D251F117B352C661EB8359C8C748FD2E53FD900A9CCCB289D8879C925E6D84D6E110BF68B1956C8C621100DCA2B6628A6E35B2ADFE8A, 0xBC999A1943121D4A5A8DEA86D722DBD1A8AC1B55B43AC55BB0B63CF351BF3A29A0C385CB0401720144616ACA65FD3D129CD1DB6C96C548DCCFAA03B2FEBADE03AE7387423AD4BF3C6D07AD2059E7375D21E7D68C3AAAEEC3AFA4A05320ADBC2857B23CD54674CE89521553D2E35E0064872C0CC1782314ACF6E8E667C96152D5, N'olaniyiolatunji162@gmail.com', N'08177654960', N'Male', CAST(N'2021-01-29' AS Date), N'0000', N'122345678929', N'122345678992', N'Android', N'Samsung', N'Note 20 Ultra', N'1.1.1.1', N'test', NULL);
+ 
+INSERT WalletUsers (`Id`, `FirstName`, `LastName`, `UserName`, `PasswordHash`, `PasswordSalt`, `EmailAddress`, `PhoneNumber`, `Gender`, `DateOfBirth`, `Transactionpin`, `Deviceimei`, `HardwareIMEI`, `Deviceos`, `Devicemake`, `Devicemodel`, `Ipaddress`, `Referralcode`, `TransPin`) VALUES (N'bcc049f5-4057-4c54-a06e-adb7c5f96c09', N'olaniyi', N'olatunji', N'olaniyiola', 0x00DB8227BAD51D106408D80951B2589F179C220289DBEA7EBC07757B835EE49389908E57D7A908190159E836A21862A8484D8F366DD65528F2451EB4E6341587, 0xC0864C26AB9D163A8B2607BD871BAE3771F78D61E96A3DE762723810B7A001E31752846354F91CB2D06D822866A6322057ADADF607A9CBB6B6181217C48249D4E5E34B2F1A287C8522C3F1BC9D471F1925DBE301C4E3E522BCA541AAF0FC76ABF0B32480239E810A2FDB1E2E4130E85F089EAED6040342CAC661CCC46BCD4D4B, N'olaniyiolatunji16@gmail.com', N'08177654960', N'Male', CAST(N'2021-01-29' AS Date), N'0000', N'12234567899', N'12234567899', N'An droid', N'Samsung', N'Note 20 Ultra', N'1.1.1.1', N'test', NULL);
+ 
+INSERT WalletUsers (`Id`, `FirstName`, `LastName`, `UserName`, `PasswordHash`, `PasswordSalt`, `EmailAddress`, `PhoneNumber`, `Gender`, `DateOfBirth`, `Transactionpin`, `Deviceimei`, `HardwareIMEI`, `Deviceos`, `Devicemake`, `Devicemodel`, `Ipaddress`, `Referralcode`, `TransPin`) VALUES (N'ef238228-9a8e-46d3-9f0b-66dd296e0663', N'ololade', N'ololade', N'technololy4', 0x7248A39DFB1E570444B1B7053040530DFBE94C1B5A916CB746C60EE337D6B05FFD12A8C9C81890A88608AE33AFA0A2B9A4C593CE1731C19E02C9DCC27FFFD23D, 0xBA1F2E782389EDE2C4A2630677FE71D80147282F75533B7F9EDAE287132377AB502554EB0065AD7C2A539206215FB235C58FEC8CFFC627A333884C3F184133FA210DCEFE730BC7C3C37DE7B615848E6C79404640CDF359CD09352BC973BFD9E531EB54DC6940EF0A65A490E83B83C6B422A5AAE510A0FB4EA0F234C4331D8D96, N'loladeking4@gmail.com', N'07036605597', N'Male', CAST(N'1986-12-26' AS Date), N'1234', N'627454082aaf46f4b', N'Google MODEL.sdk_gphone_x86_arm', N'11', N'Google', N'sdk_gphone_x86_arm', N'10.0.2.16; 10.0.2.15; ', N'', NULL);
+ 
+INSERT WalletUsers (`Id`, `FirstName`, `LastName`, `UserName`, `PasswordHash`, `PasswordSalt`, `EmailAddress`, `PhoneNumber`, `Gender`, `DateOfBirth`, `Transactionpin`, `Deviceimei`, `HardwareIMEI`, `Deviceos`, `Devicemake`, `Devicemodel`, `Ipaddress`, `Referralcode`, `TransPin`) VALUES (N'f921cf10-80e2-4244-8945-ebe832eb780e', N'ololade', N'ololade', N'technololy3', 0x20D984E6E86B8F4400A16B91BECB8A64EBBC9E85FEC2342247F401042E04BF38192267C75D1E160EB46AAB95AD3A2087FCAED26666B4D2A73E32E7CEA0B74B1D, 0x7F5B82D1DA13C5B4108BC447619DF2D992CBB0011224CA9E589A317A75731B5F9FD8C616FC15F5D54590AE4D6C872348899688195FF3AF8254B0008F57F301A4D219219148748B09F306784DFD2986C0F77CB77981C335DA5ACE80002DAB9910AF9A85D81248A1AB633E1EDBF28B747F9FD0D5D3C585AFCB014E71BEC2C3EE56, N'loladeking3@gmail.com', N'07036605597', N'Male', CAST(N'1986-12-26' AS Date), N'1234', N'627454082aaf46f3b', N'Google MODEL=sdk_gph', N'11', N'Google', N'sdk_gphone_x86_arm', N'10.0.2.16; 10.0.2.15; ', N'', NULL);
+ 
+INSERT WalletTransfers (`Id`, `Amount`, `SMID`, `Category`, `CurrencyCode`, `ToAcct`, `FromAct`, `Remarks`, `DateCreated`, `Status`, `BalanceAfterDebit`, `BalanceAfterCredit`, `Balance`) VALUES (N'83b1ea9c-cba7-4615-83de-47fe61e17e58', 2000, N'bcc049f5-4057-4c54-a06e-adb7c5f96c09', N'spending', N'NGN', N'07036605597', N'08177654960', N'testing', CAST(N'2021-02-21T02:53:32.9833333' AS DATETIME(6)), N'Successful', 0, 0, 0);
+ 
+INSERT WalletTransfers (`Id`, `Amount`, `SMID`, `Category`, `CurrencyCode`, `ToAcct`, `FromAct`, `Remarks`, `DateCreated`, `Status`, `BalanceAfterDebit`, `BalanceAfterCredit`, `Balance`) VALUES (N'654b1d32-83cd-4ffa-874e-d537fc6d6a7f', 2000, N'bcc049f5-4057-4c54-a06e-adb7c5f96c09', N'spending', N'NGN', N'07036605597', N'08177654960', N'testing', CAST(N'2021-02-21T03:10:48.4466667' AS DATETIME(6)), N'Successful', 6000, 14000, 6000);
+ 
+SET IDENTITY_INSERT `dbo`.`CustomerProfile` ON 
+GO
+INSERT CustomerProfile (`CustomerID`, `SMID`, `Username`, `Email`, `Address`, `BVN`, `PhoneNumber`, `Fullname`, `QuestionCompleted`, `DeviceInfoExist`, `IsAgent`, `HasPryAccount`, `PryAccount`, `ReferralCode`, `IsWalletOnly`, `AgentCode`, `LastLogin`, `DateOfBirth`, `IsDefaultPassword`, `RMDaoCode`, `RMName`, `RMEmail`, `RMMobile`) VALUES (1, N'bcc049f5-4057-4c54-a06e-adb7c5f96c09', N'olaniyiola', N'olaniyiolatunji16@gmail.com', N'olaniyiolatunji16@gmail.com', N'', N'08177654960', N'olaniyi olatunji', 0, 0, 0, 0, N'', N'', 1, N'', N'29-Jan-21 8:33:20 PM', CAST(N'2021-01-29T20:28:05.7570000' AS DATETIME(6)), 0, N'', N'', N'', N'');
+ 
+INSERT CustomerProfile (`CustomerID`, `SMID`, `Username`, `Email`, `Address`, `BVN`, `PhoneNumber`, `Fullname`, `QuestionCompleted`, `DeviceInfoExist`, `IsAgent`, `HasPryAccount`, `PryAccount`, `ReferralCode`, `IsWalletOnly`, `AgentCode`, `LastLogin`, `DateOfBirth`, `IsDefaultPassword`, `RMDaoCode`, `RMName`, `RMEmail`, `RMMobile`) VALUES (2, N'b7a62deb-695b-4f05-8336-841c6dffce73', N'olaniyiola2', N'olaniyiolatunji162@gmail.com', N'olaniyiolatunji162@gmail.com', N'', N'08177654960', N'olaniyi olatunji', 0, 0, 0, 0, N'', N'', 1, N'', N'29-Jan-21 8:59:09 PM', CAST(N'2021-01-29T20:28:05.7570000' AS DATETIME(6)), 0, N'', N'', N'', N'');
+ 
+SET IDENTITY_INSERT `dbo`.`CustomerProfile` OFF
+GO
+SET IDENTITY_INSERT `dbo`.`WalletInfo` ON 
+GO
+INSERT WalletInfo (`Id`, `Customerid`, `FirstName`, `Lastname`, `Email`, `Mobile`, `Nuban`, `Availablebalance`, `Phone`, `Gender`, `FullName`, `CURRENCYCODE`) VALUES (1, N'bcc049f5-4057-4c54-a06e-adb7c5f96c09', N'olaniyi', N'olatunji', N'olaniyiolatunji16@gmail.com', N'08177654960', N'08177654960', 6000, N'08177654960', N'Male', N'olaniyi olatunji', N'NGN');
+ 
+INSERT WalletInfo (`Id`, `Customerid`, `FirstName`, `Lastname`, `Email`, `Mobile`, `Nuban`, `Availablebalance`, `Phone`, `Gender`, `FullName`, `CURRENCYCODE`) VALUES (1002, N'62dd8167-08de-455d-a5ac-8479f350cf0f', N'ololade', N'ololade', N'loladeking@gmail.com', N'07036605597', N'07036605597', 14000, N'07036605597', N'Male', N'ololade ololade', N'NGN');
+ 
+SET IDENTITY_INSERT `dbo`.`WalletInfo` OFF
+GO
+INSERT Question (`QuestionId`, `Question`, `CreatedBy`, `DateCreated`) VALUES (N'00000000-0000-0000-0000-000000000000', N'Testing Question', N'Olaniyi', CAST(N'2021-02-15T08:13:11.563' AS DateTime(3)));
+ 
+INSERT Question (`QuestionId`, `Question`, `CreatedBy`, `DateCreated`) VALUES (N'3fa85f64-5717-4562-b3fc-2c963f66afa6', N'What is the model of your first care?', N'Olaniyi', CAST(N'2021-02-15T08:57:45.043' AS DateTime(3)));
+ 
+INSERT Question (`QuestionId`, `Question`, `CreatedBy`, `DateCreated`) VALUES (N'3fa85f64-5717-4562-b3fc-2c963f66afa7', N'Where did you meet your spouse?', N'Olaniyi', CAST(N'2021-02-15T08:58:52.280' AS DateTime(3)));
+ 
+INSERT Question (`QuestionId`, `Question`, `CreatedBy`, `DateCreated`) VALUES (N'3fa85f64-5717-4562-b3fc-2c963f66afa8', N'What year did yiu graduate university?', N'Olaniyi', CAST(N'2021-02-15T08:59:57.383' AS DateTime(3)));
+ 
+INSERT UserQA (`UserQAId`, `UserId`, `QuestionId`, `Answer`, `DateCreated`) VALUES (N'00000000-0000-0000-0000-000000000000', N'4982fb08-8d6f-4492-a8a1-10e7fc89532d', N'3fa85f64-5717-4562-b3fc-2c963f66afa6', N'Benz', CAST(N'2021-02-15T09:46:28.220' AS DateTime(3)));
+ 
+INSERT UserQA (`UserQAId`, `UserId`, `QuestionId`, `Answer`, `DateCreated`) VALUES (N'dc031dde-41a7-40b5-ad7e-42bb20c7c40d', N'4982fb08-8d6f-4492-a8a1-10e7fc89532d', N'3fa85f64-5717-4562-b3fc-2c963f66afa7', N'dublin', CAST(N'2021-02-15T09:52:49.200' AS DateTime(3)));
+ 
+
