@@ -35,10 +35,10 @@ namespace AgencyBanking.Controllers
                 {
                     Questrespones.Add(new QuestionResponse
                     {
-                        QuestionId = quest.QuestionId,
+                        QuestionId = quest.Questionid,
                         Question = quest.Question1,
-                        CreatedBy = quest.CreatedBy,
-                        DateCreated = quest.DateCreated,
+                        CreatedBy = quest.Createdby,
+                        DateCreated = quest.Datecreated,
                     });
                 }
 
@@ -73,11 +73,11 @@ namespace AgencyBanking.Controllers
                 {
                     if (!UserQaExists(userQas.smid, uqa.questionId))
                     {
-                        var userQa = new UserQa()
+                        var userQa = new Userqa()
                         {
-                            UserQaid = Guid.NewGuid(),
-                            UserId = userQas.smid,
-                            QuestionId = uqa.questionId,
+                            Userqaid = Guid.NewGuid().ToString(),
+                            Userid = userQas.smid,
+                            Questionid = uqa.questionId,
                             Answer =  Encryption.Encrypt(uqa.answer)
                         };
                         _context.UserQas.Add(userQa);
@@ -85,10 +85,10 @@ namespace AgencyBanking.Controllers
                     }
                 }
 
-                if(_context.UserQas.Where(x => x.UserId.Equals(userQas.smid)).Count() >= 3)
+                if(_context.UserQas.Where(x => x.Userid.Equals(userQas.smid)).Count() >= 3)
                 {
                     var customer = _context.CustomerProfiles.Where(x => x.Smid.Equals(userQas.smid)).FirstOrDefault();
-                    customer.QuestionCompleted = true;
+                    customer.Questioncompleted = true;
 
                     _context.Entry(customer).State = EntityState.Modified;
                     _context.SaveChanges();
@@ -118,7 +118,7 @@ namespace AgencyBanking.Controllers
         [HttpPost("GetQuestionByUserId")]
         public IActionResult GetQuestionByUserId(string UserId)
         {
-            var userQa = _context.UserQas.Where(x => x.UserId.Equals(UserId)).Include(q => q.Question);
+            var userQa = _context.UserQas.Where(x => x.Userid.Equals(UserId)).Include(q => q.Question);
 
             if (userQa == null)
             {
@@ -139,7 +139,7 @@ namespace AgencyBanking.Controllers
         [HttpPost("VerifyQuestionsByUserID")]
         public IActionResult VerifyQuestionsByUserID(VerifyUserQuestion request)
         {
-            var userQa = _context.UserQas.Where(x => x.UserId.Equals(request.UserID) && x.QuestionId.Equals(Guid.Parse(request.QuestionID))).FirstOrDefault();
+            var userQa = _context.UserQas.Where(x => x.Userid.Equals(request.UserID) && x.Questionid.Equals(Guid.Parse(request.QuestionID))).FirstOrDefault();
 
             if (userQa == null)
             {
@@ -175,9 +175,9 @@ namespace AgencyBanking.Controllers
 
         }
 
-        private bool UserQaExists(string userid, Guid? questionId)
+        private bool UserQaExists(string userid, string questionId)
         {
-            return _context.UserQas.Any(e => e.UserId == userid && e.QuestionId == questionId);
+            return _context.UserQas.Any(e => e.Userid == userid && e.Questionid == questionId);
         }
 
 

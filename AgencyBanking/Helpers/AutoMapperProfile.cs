@@ -11,7 +11,7 @@ namespace AgencyBanking.Helpers
     {
         public AutoMapperProfile()
         {
-            CreateMap<CreateWalletRequest, WalletUser>();
+            CreateMap<CreateWalletRequest, Walletuser>();
         }
     }
 }

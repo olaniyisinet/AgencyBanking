@@ -50,15 +50,15 @@ namespace AgencyBanking.Controllers
                 });
             }
 
-                var walletTrans = new WalletTransfer()
+                var walletTrans = new Wallettransfer()
                 {
-                     Id = Guid.NewGuid(),
+                     Id = Guid.NewGuid().ToString(),
                      Amount  = walletTransfer.amt,
                      Smid = walletTransfer.SMID,
                      Category = walletTransfer.Category,
-                     CurrencyCode = walletTransfer.CURRENCYCODE,
-                     ToAcct = walletTransfer.toacct,
-                     FromAct = walletTransfer.frmacct,
+                     Currencycode = walletTransfer.CURRENCYCODE,
+                     Toacct = walletTransfer.toacct,
+                     Fromact = walletTransfer.frmacct,
                      Remarks = walletTransfer.remarks,
                      Status = "Pending"
                  };
@@ -142,7 +142,7 @@ namespace AgencyBanking.Controllers
         [HttpPost("GetBeneficiary")]
         public IActionResult GetBeneficiary(getBeneficiary request)
         {
-            var beneficiaries = _context.Beneficiaries.Where(x => x.UserId.Equals(request.UserId)).ToList();
+            var beneficiaries = _context.Beneficiaries.Where(x => x.Userid.Equals(request.UserId)).ToList();
 
             try
             {
@@ -207,13 +207,13 @@ namespace AgencyBanking.Controllers
                     message = "Successful",
                 });
             }
-            var transactions = _context.WalletTransfers.Where(x => x.FromAct.Equals(user.Nuban) || x.ToAcct.Equals(user.Nuban)).OrderByDescending(x => x.DateCreated);
+            var transactions = _context.WalletTransfers.Where(x => x.Fromact.Equals(user.Nuban) || x.Toacct.Equals(user.Nuban)).OrderByDescending(x => x.Datecreated);
 
             try 
             { 
                 var from = DateTime.Parse(request.StartDate);
                 var to = DateTime.Parse(request.EndDate);
-                transactions = transactions.Where(x => x.DateCreated >= from && x.DateCreated <= to).OrderByDescending(x => x.DateCreated);
+                transactions = transactions.Where(x => x.Datecreated >= from && x.Datecreated <= to).OrderByDescending(x => x.Datecreated);
             }
             catch
             {
@@ -245,13 +245,13 @@ namespace AgencyBanking.Controllers
         public IActionResult getwallethistorywithnuban(getTransactionswithnuban request)
         {
 
-            var transactions = _context.WalletTransfers.Where(x => x.FromAct.Equals(request.Nuban) || x.ToAcct.Equals(request.Nuban));
+            var transactions = _context.WalletTransfers.Where(x => x.Fromact.Equals(request.Nuban) || x.Toacct.Equals(request.Nuban));
 
             try
             {
                 var from = DateTime.Parse(request.StartDate).Date;
                 var to = DateTime.Parse(request.EndDate).Date.AddDays(1);
-                transactions = _context.WalletTransfers.Where(x => x.FromAct.Equals(request.Nuban) || x.ToAcct.Equals(request.Nuban) && x.DateCreated >= from && x.DateCreated < to);    
+                transactions = _context.WalletTransfers.Where(x => x.Fromact.Equals(request.Nuban) || x.Toacct.Equals(request.Nuban) && x.Datecreated >= from && x.Datecreated < to);    
             }
             catch      
             {
@@ -305,7 +305,7 @@ namespace AgencyBanking.Controllers
 
         private bool VerifyPin(string pin, string smid)
         {
-            return _context.WalletUsers.Any(e => e.Id == smid && e.TransPin== Encryption.Encrypt(pin));
+            return _context.WalletUsers.Any(e => e.Id == smid && e.Transpin== Encryption.Encrypt(pin));
         }
 
         private bool VerifySenderBalance(string smid, double? amount)
@@ -350,7 +350,7 @@ namespace AgencyBanking.Controllers
             return true;
         }
 
-        private bool UpdateWalletBalances(Guid transactionId, string Nuban, double? amount, string senderID, bool saveBeneficiary)
+        private bool UpdateWalletBalances(string transactionId, string Nuban, double? amount, string senderID, bool saveBeneficiary)
         {
             var customer = _context.WalletInfos.Where(x => x.Nuban == Nuban).FirstOrDefault();
 
@@ -366,7 +366,7 @@ namespace AgencyBanking.Controllers
 
                     if (saveBeneficiary)
                     {
-                        SaveBeneficiary(senderID, Nuban, customer.FullName);
+                        SaveBeneficiary(senderID, Nuban, customer.Fullname);
                     }
 
                  //   Email.Send(customer.FullName, customer.Email, "Credit Alert on BPay Banking", "Dear "+ customer.FullName+ ", <br> You have successfully recieved NGN" + amount + " on the Agency Banking App. \n Your new available balance is " + customer.Availablebalance
@@ -383,13 +383,13 @@ namespace AgencyBanking.Controllers
             return false;
         }
 
-        private void UpdateTransationStatus(Guid transactionId, double? BalanceAfterDebit, double? BalanceAfterCredit, double? Balance)
+        private void UpdateTransationStatus(string transactionId, double? BalanceAfterDebit, double? BalanceAfterCredit, double? Balance)
         {
             var transaction = _context.WalletTransfers.Find(transactionId);
             transaction.Status = "Successful";
             transaction.Balance = Balance;
-            transaction.BalanceAfterCredit = BalanceAfterCredit;
-            transaction.BalanceAfterDebit = BalanceAfterDebit;
+            transaction.Balanceaftercredit = BalanceAfterCredit;
+            transaction.Balanceafterdebit = BalanceAfterDebit;
 
             _context.Entry(transaction).State = EntityState.Modified;
             _context.SaveChanges();
@@ -398,19 +398,19 @@ namespace AgencyBanking.Controllers
 
         private void SaveBeneficiary(string userId, string BeneficiaryAccountNumber, string BeneficiaryAccountName)
         {
-            if (_context.Beneficiaries.Any(x => x.UserId.Equals(userId) && x.BeneficiaryAccountNumber.Equals(BeneficiaryAccountNumber)))
+            if (_context.Beneficiaries.Any(x => x.Userid.Equals(userId) && x.Beneficiaryaccountnumber.Equals(BeneficiaryAccountNumber)))
             {
                 return;
             }
 
             var beneficiary = new Beneficiary()
             {
-                BeneficiaryId = Guid.NewGuid(),
-                UserId = userId,
-                BeneficiaryAccountNumber = BeneficiaryAccountNumber,
-                BeneficiaryAccountName = BeneficiaryAccountName,
-                BeneficiaryBankName = "BelloKano",
-                BeneficiaryBankCode = "999566"
+                Beneficiaryid = Guid.NewGuid().ToString(),
+                Userid = userId,
+                Beneficiaryaccountnumber = BeneficiaryAccountNumber,
+                Beneficiaryaccountname = BeneficiaryAccountName,
+                Beneficiarybankname = "BelloKano",
+                Beneficiarybankcode = "999566"
             };
 
             try

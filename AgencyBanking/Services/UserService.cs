@@ -13,14 +13,14 @@ namespace AgencyBanking.Services
 
     public interface IUserService
     {
-        WalletUser Authenticate(string username, string password, string DeviceIMEI);
-        WalletUser Create(WalletUser user, string password);
-        WalletUser GetById(string id);
-        WalletUser FindByPhone(string phone);
+        Walletuser Authenticate(string username, string password, string DeviceIMEI);
+        Walletuser Create(Walletuser user, string password);
+        Walletuser GetById(string id);
+        Walletuser FindByPhone(string phone);
         bool ResetPassword(string Nuban);
-        WalletUser FindByID(string smid);
+        Walletuser FindByID(string smid);
         string ChangePassword(string userName, string oldpassword, string newPassword);
-        UserDeviceInfo AddUserDevice(Adddevice request);
+        Userdeviceinfo AddUserDevice(Adddevice request);
         bool UpdateProfile(UserProfileUpdate request);
 
         string errorMessage { get; set; }
@@ -42,22 +42,22 @@ namespace AgencyBanking.Services
             this.mapper = mapper;
         }
 
-        public WalletUser Authenticate(string username, string password, string DeviceIMEI)
+        public Walletuser Authenticate(string username, string password, string DeviceIMEI)
         {
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
                 return null;
 
-            var user = _context.WalletUsers.Include(i => i.CustomerProfiles).Include(w => w.WalletInfos).Include(b => b.Beneficiaries).SingleOrDefault(x => x.UserName == username);
+            var user = _context.WalletUsers.Include(i => i.CustomerProfiles).Include(w => w.WalletInfos).Include(b => b.Beneficiaries).SingleOrDefault(x => x.Username == username);
 
             // check if username exists
             if (user == null)
                 return null;
 
             // check if password is correct
-            if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt))
+            if (!VerifyPasswordHash(password, user.Passwordhash, user.Passwordsalt))
                 return null;
 
-            if (!_context.UserDeviceInfos.Any(x => x.UserId.Equals(user.Id) && x.Imei.Equals(DeviceIMEI) && x.IsCurrent.Equals(true)))
+            if (!_context.UserDeviceInfos.Any(x => x.Userid.Equals(user.Id) && x.Imei.Equals(DeviceIMEI) && x.Iscurrent.Equals(true)))
                throw new AppException("Device Not Registered with your Profile");
 
             // authentication successful
@@ -66,88 +66,88 @@ namespace AgencyBanking.Services
             return user;
         }
 
-        public WalletUser Create(WalletUser user, string password)
+        public Walletuser Create(Walletuser user, string password)
         {
             // validation
             if (string.IsNullOrWhiteSpace(password))
                 throw new AppException("Password is required");
 
-            if (_context.WalletUsers.Any(x => x.UserName == user.UserName))
-                throw new AppException("Username \"" + user.UserName + "\" is already taken");
+            if (_context.WalletUsers.Any(x => x.Username == user.Username))
+                throw new AppException("Username \"" + user.Username + "\" is already taken");
 
-            if (_context.WalletUsers.Any(x => x.EmailAddress == user.EmailAddress))
-                throw new AppException("Email \"" + user.EmailAddress + "\" is already taken");
+            if (_context.WalletUsers.Any(x => x.Emailaddress == user.Emailaddress))
+                throw new AppException("Email \"" + user.Emailaddress + "\" is already taken");
             
            // if (_context.WalletUsers.Any(x => x.Deviceimei == user.Deviceimei))
              //   throw new AppException("Device already profiled with this user");
 
-            if (_context.WalletUsers.Any(x => x.PhoneNumber == user.PhoneNumber))
+            if (_context.WalletUsers.Any(x => x.Phonenumber == user.Phonenumber))
                 throw new AppException("Phone number already profiled with a user");
 
 
             byte[] passwordHash, passwordSalt;
             CreatePasswordHash(password, out passwordHash, out passwordSalt);
 
-            user.PasswordHash = passwordHash;
-            user.PasswordSalt = passwordSalt;
-            user.TransPin = Encryption.Encrypt(user.Transactionpin);
+            user.Passwordhash = passwordHash;
+            user.Passwordsalt = passwordSalt;
+            user.Transpin = Encryption.Encrypt(user.Transactionpin);
             user.Transactionpin = "";
 
-            if (user.HardwareImei.Length > 50)
+            if (user.Hardwareimei.Length > 50)
             {
-                user.HardwareImei = user.HardwareImei.Substring(0, 50);
+                user.Hardwareimei = user.Hardwareimei.Substring(0, 50);
             }
             //create wallet info
-            var wallet = new WalletInfo
+            var wallet = new Walletinfo
             {
                 Customerid = user.Id,
-                FirstName = user.FirstName,
-                Lastname = user.LastName,
-                Email = user.EmailAddress,
-                Mobile = user.PhoneNumber,
-                Nuban = user.PhoneNumber,
+                Firstname = user.Firstname,
+                Lastname = user.Lastname,
+                Email = user.Emailaddress,
+                Mobile = user.Phonenumber,
+                Nuban = user.Phonenumber,
                 Availablebalance = 10000.00,
-                Phone = user.PhoneNumber,
+                Phone = user.Phonenumber,
                 Gender = user.Gender,
-                FullName = user.FirstName + " " + user.LastName,
+                Fullname = user.Firstname + " " + user.Lastname,
                 Currencycode = "NGN"
             };
 
-            var profile = new CustomerProfile
+            var profile = new Customerprofile
             {
-                Username = user.UserName,
-                Email = user.EmailAddress,
-                Address = user.EmailAddress,
+                Username = user.Username,
+                Email = user.Emailaddress,
+                Address = user.Emailaddress,
                 Bvn = "",
-                PhoneNumber = user.PhoneNumber,
-                Fullname = wallet.FullName,
-                QuestionCompleted = false,
-                DeviceInfoExist = false,
-                IsAgent = false,
-                HasPryAccount = false,
-                PryAccount = "",
-                ReferralCode = "",
-                IsWalletOnly = true,
-                AgentCode = "",
-                LastLogin = DateTime.UtcNow.ToString(),
-                DateOfBirth = user.DateOfBirth,
-                IsDefaultPassword = false,
-                RmdaoCode = "",
+                Phonenumber = user.Phonenumber,
+                Fullname = wallet.Fullname,
+                Questioncompleted = false,
+                Deviceinfoexist = false,
+                Isagent = false,
+                Haspryaccount = false,
+                Pryaccount = "",
+                Referralcode = "",
+                Iswalletonly = true,
+                Agentcode = "",
+                Lastlogin = DateTime.UtcNow.ToString(),
+                Dateofbirth = user.Dateofbirth,
+                Isdefaultpassword = false,
+                Rmdaocode = "",
                 Rmname = "",
                 Rmemail = "",
                 Rmmobile = ""
             };
 
-            var deviceInfo = new UserDeviceInfo
+            var deviceInfo = new Userdeviceinfo
             {
-                DeviceId = Guid.NewGuid(),
+                Deviceid = Guid.NewGuid().ToString(),
                 Imei = user.Deviceimei,
                 Osversion = user.Deviceos,
                 Make = user.Devicemake,
                 Model = user.Devicemodel,
                 Ipaddress = user.Ipaddress,
-                IsCurrent = true,
-                HardwareImei = user.HardwareImei
+                Iscurrent = true,
+                Hardwareimei = user.Hardwareimei
             };
 
             user.UserDeviceInfos.Add(deviceInfo);
@@ -172,13 +172,13 @@ namespace AgencyBanking.Services
                 return false;
             }
 
-            user.WalletInfos.FirstOrDefault().FirstName = request.FirstName;
+            user.WalletInfos.FirstOrDefault().Firstname = request.FirstName;
             user.WalletInfos.FirstOrDefault().Lastname = request.LastName;
             user.WalletInfos.FirstOrDefault().Gender = request.Gender;
-            user.WalletInfos.FirstOrDefault().FullName = request.FirstName + " " + request.LastName;
+            user.WalletInfos.FirstOrDefault().Fullname = request.FirstName + " " + request.LastName;
          
             user.CustomerProfiles.FirstOrDefault().Fullname = request.FirstName + " " + request.LastName;
-            user.CustomerProfiles.FirstOrDefault().DateOfBirth = request.DateOfBirth;
+            user.CustomerProfiles.FirstOrDefault().Dateofbirth = request.DateOfBirth;
 
             _context.Entry(user).State = EntityState.Modified;
             _context.SaveChanges();
@@ -186,7 +186,7 @@ namespace AgencyBanking.Services
             return true;
         }
 
-        public WalletUser GetById(string id)
+        public Walletuser GetById(string id)
         {
             return _context.WalletUsers.Find(id);
         }
@@ -222,13 +222,13 @@ namespace AgencyBanking.Services
             }
         }
 
-        public WalletUser FindByPhone(string phone)
+        public Walletuser FindByPhone(string phone)
         {
-            var user = _context.WalletUsers.Where(x => x.PhoneNumber == phone).FirstOrDefault();
+            var user = _context.WalletUsers.Where(x => x.Phonenumber == phone).FirstOrDefault();
             return user;
         } 
         
-        public WalletUser FindByID(string smid)
+        public Walletuser FindByID(string smid)
         {
             var user = _context.WalletUsers.Find(smid);
             return user;
@@ -238,7 +238,7 @@ namespace AgencyBanking.Services
         {
             try
             {
-                var user = _context.WalletUsers.Where(x => x.PhoneNumber == Nuban).FirstOrDefault();
+                var user = _context.WalletUsers.Where(x => x.Phonenumber == Nuban).FirstOrDefault();
                 if (user == null)
                 {
                     return false;
@@ -247,15 +247,15 @@ namespace AgencyBanking.Services
                 var newPassword = GetRandomPassword(6);
                 byte[] passwordHash, passwordSalt;
                 CreatePasswordHash(newPassword, out passwordHash, out passwordSalt);
-                user.PasswordHash = passwordHash;
-                user.PasswordSalt = passwordSalt;
+                user.Passwordhash = passwordHash;
+                user.Passwordsalt = passwordSalt;
 
                 _context.WalletUsers.Update(user);
                 _context.SaveChanges();
 
                 try
                 {
-                    Email.Send(user.FirstName + " " + user.LastName, user.EmailAddress, "BPay App Password Reset Successful", "You have successfully reset you BetterPay password." +
+                    Email.Send(user.Firstname + " " + user.Lastname, user.Emailaddress, "BPay App Password Reset Successful", "You have successfully reset you BetterPay password." +
                        " Log in with the password below . <br> <br> New Password: " + newPassword + "<br> <br> Make sure you change your password when you successfully log in");
                 }
                 catch
@@ -281,19 +281,19 @@ namespace AgencyBanking.Services
                     return "User not found";
                 }
 
-                if (!VerifyPasswordHash(oldpassword, user.PasswordHash, user.PasswordSalt))
+                if (!VerifyPasswordHash(oldpassword, user.Passwordhash, user.Passwordsalt))
                 {
                     return "Old Password is incorrect";
                 }
 
                 byte[] passwordHash, passwordSalt;
                 CreatePasswordHash(newPassword, out passwordHash, out passwordSalt);
-                user.PasswordHash = passwordHash;
-                user.PasswordSalt = passwordSalt;
+                user.Passwordhash = passwordHash;
+                user.Passwordsalt = passwordSalt;
 
                 _context.WalletUsers.Update(user);
                 _context.SaveChanges();
-                Email.Send(user.FirstName + " " + user.LastName, user.EmailAddress, "BPay App Password Reset Successful", "You have successfully reset you KMN APP (KnowMyNeighbour) password");
+                Email.Send(user.Firstname + " " + user.Lastname, user.Emailaddress, "BPay App Password Reset Successful", "You have successfully reset you KMN APP (KnowMyNeighbour) password");
                 return "Success";
             }
             catch (Exception ex)
@@ -302,27 +302,27 @@ namespace AgencyBanking.Services
             }
         }
 
-        public UserDeviceInfo AddUserDevice(Adddevice request)
+        public Userdeviceinfo AddUserDevice(Adddevice request)
         {
-            var user = _context.WalletUsers.Where(x => x.UserName.Equals(request.UserName));
+            var user = _context.WalletUsers.Where(x => x.Username.Equals(request.UserName));
             if(!user.Any())
                 throw new AppException("User Not Found");
 
-            var userdevice = _context.UserDeviceInfos.Where(x => x.UserId.Equals(user.FirstOrDefault().Id));
+            var userdevice = _context.UserDeviceInfos.Where(x => x.Userid.Equals(user.FirstOrDefault().Id));
 
-             var previousDevice = userdevice.Where(x => x.Imei != request.DeviceIMEI && x.IsCurrent == true).FirstOrDefault();
-             var SameIMEIpreviousDevice = userdevice.Where(x => x.Imei == request.DeviceIMEI && x.IsCurrent == false).FirstOrDefault();
-             var SameIMEICurrentDevice = userdevice.Where(x => x.Imei == request.DeviceIMEI && x.IsCurrent == true).FirstOrDefault();
+             var previousDevice = userdevice.Where(x => x.Imei != request.DeviceIMEI && x.Iscurrent == true).FirstOrDefault();
+             var SameIMEIpreviousDevice = userdevice.Where(x => x.Imei == request.DeviceIMEI && x.Iscurrent == false).FirstOrDefault();
+             var SameIMEICurrentDevice = userdevice.Where(x => x.Imei == request.DeviceIMEI && x.Iscurrent == true).FirstOrDefault();
 
             if (previousDevice != null)
             {
-                previousDevice.IsCurrent = false;
+                previousDevice.Iscurrent = false;
                 _context.UserDeviceInfos.Update(previousDevice);
                 _context.SaveChanges();
             }
             if (SameIMEIpreviousDevice != null)
             {
-                SameIMEIpreviousDevice.IsCurrent = true;
+                SameIMEIpreviousDevice.Iscurrent = true;
                 SameIMEIpreviousDevice.Ipaddress = request.Ipaddress;
                 _context.UserDeviceInfos.Update(SameIMEIpreviousDevice);
                 _context.SaveChanges();
@@ -336,17 +336,17 @@ namespace AgencyBanking.Services
                }
   
 
-            var deviceInfo = new UserDeviceInfo
+            var deviceInfo = new Userdeviceinfo
             {
-                DeviceId = Guid.NewGuid(),
-                UserId = user.FirstOrDefault().Id,
+                Deviceid = Guid.NewGuid().ToString(),
+                Userid = user.FirstOrDefault().Id,
                 Imei = request.DeviceIMEI,
                 Osversion = request.DeviceOS,
                 Make = request.Make,
                 Model = request.Model,
                 Ipaddress = request.Ipaddress,
-                IsCurrent = true,
-                HardwareImei = request.HardwareIMEI
+                Iscurrent = true,
+                Hardwareimei = request.HardwareIMEI
             };
 
             _context.UserDeviceInfos.Add(deviceInfo);
@@ -358,7 +358,7 @@ namespace AgencyBanking.Services
         private static string GetRandomPassword(int length)
         {
             byte[] rgb = new byte[length];
-            RNGCryptoServiceProvider rngCrypt = new RNGCryptoServiceProvider();
+            var rngCrypt = new RNGCryptoServiceProvider();
             rngCrypt.GetBytes(rgb);
             return Convert.ToBase64String(rgb);
         }

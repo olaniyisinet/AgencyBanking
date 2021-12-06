@@ -13,7 +13,7 @@ namespace AgencyBanking.Models
 
     public class Qa
     {
-        public Guid? questionId { get; set; }
+        public string questionId { get; set; }
         public string answer { get; set; }
     }
 

@@ -8,43 +8,43 @@ namespace AgencyBanking.Helpers
 {
     public static class ExcludeNested
     {
-        public static CustomerProfileResponse setProfile(CustomerProfile profile)
+        public static CustomerProfileResponse setProfile(Customerprofile profile)
         {
             return new CustomerProfileResponse()
             {
-                CustomerId = profile.CustomerId,
+                CustomerId = profile.Customerid,
                 Smid = profile.Smid,
                 Username = profile.Username,
                 Email = profile.Email,
                 Address = profile.Address,
                 Bvn = profile.Bvn,
-                PhoneNumber = profile.PhoneNumber,
+                PhoneNumber = profile.Phonenumber,
                 Fullname = profile.Fullname,
-                QuestionCompleted = profile.QuestionCompleted,
-                DeviceInfoExist = profile.DeviceInfoExist,
-                IsAgent = profile.IsAgent,
-                HasPryAccount = profile.HasPryAccount,
-                PryAccount = profile.PryAccount,
-                ReferralCode = profile.ReferralCode,
-                IsWalletOnly = profile.IsWalletOnly,
-                AgentCode = profile.AgentCode,
-                LastLogin = profile.LastLogin,
-                DateOfBirth = profile.DateOfBirth,
-                IsDefaultPassword = profile.IsDefaultPassword,
-                RmdaoCode = profile.RmdaoCode,
+                QuestionCompleted = profile.Questioncompleted,
+                DeviceInfoExist = profile.Deviceinfoexist,
+                IsAgent = profile.Isagent,
+                HasPryAccount = profile.Haspryaccount,
+                PryAccount = profile.Pryaccount,
+                ReferralCode = profile.Referralcode,
+                IsWalletOnly = profile.Iswalletonly,
+                AgentCode = profile.Agentcode,
+                LastLogin = profile.Lastlogin,
+                DateOfBirth = profile.Dateofbirth,
+                IsDefaultPassword = profile.Isdefaultpassword,
+                RmdaoCode = profile.Rmdaocode,
                 Rmname = profile.Rmname,
                 Rmemail = profile.Rmemail,
                 Rmmobile = profile.Rmmobile
             };
         }
 
-        public static WalletInfoResponse setWalletInfo(WalletInfo wallet)
+        public static WalletInfoResponse setWalletInfo(Walletinfo wallet)
         {
             return new WalletInfoResponse()
             {
                 Id = wallet.Id,
                 Customerid = wallet.Customerid,
-                FirstName = wallet.FirstName,
+                FirstName = wallet.Firstname,
                 Lastname = wallet.Lastname,
                 Email = wallet.Email,
                 Mobile = wallet.Mobile,
@@ -52,7 +52,7 @@ namespace AgencyBanking.Helpers
                 Availablebalance = wallet.Availablebalance,
                 Phone = wallet.Phone,
                 Gender = wallet.Gender,
-                FullName = wallet.FullName,
+                FullName = wallet.Fullname,
                 Currencycode = wallet.Currencycode
             };
         }
@@ -67,13 +67,13 @@ namespace AgencyBanking.Helpers
                 {
                     Beneficiaries.Add(new BeneficiaryResponse()
                     {
-                        BeneficiaryId  = ben.BeneficiaryId,
-                        UserId = ben.UserId,
-                        BeneficiaryAccountNumber = ben.BeneficiaryAccountNumber,
-                        BeneficiaryAccountName = ben.BeneficiaryAccountName,
-                        BeneficiaryBankName = ben.BeneficiaryBankName,
-                        BeneficiaryBankCode = ben.BeneficiaryBankCode,
-                        DateCreated = ben.DateCreated
+                        BeneficiaryId  = ben.Beneficiaryid,
+                        UserId = ben.Userid,
+                        BeneficiaryAccountNumber = ben.Beneficiaryaccountnumber,
+                        BeneficiaryAccountName = ben.Beneficiaryaccountname,
+                        BeneficiaryBankName = ben.Beneficiarybankname,
+                        BeneficiaryBankCode = ben.Beneficiarybankcode,
+                        DateCreated = ben.Datecreated
     });
                 }
             }
@@ -85,7 +85,7 @@ namespace AgencyBanking.Helpers
             return Beneficiaries;
         }
 
-        public static List<CustomerAccount> setAccounts(List<CustomerAccountSchema> accountSchemas)
+        public static List<CustomerAccount> setAccounts(List<Customeraccountschema> accountSchemas)
         {
          //   var AccountInfo = new List<CustomerAccountSchemaResponse>();
             var Accounts = new List<CustomerAccount>();
@@ -97,12 +97,12 @@ namespace AgencyBanking.Helpers
                     var customerAccount = new CustomerAccountSchemaResponse()
                     {
                         Id = act.Id,
-                        UserId  = act.UserId,
-                        AccountGroup = act.AccountGroup,
-                        AccountType = act.AccountType,
+                        UserId  = act.Userid,
+                        AccountGroup = act.Accountgroup,
+                        AccountType = act.Accounttype,
                         Name = act.Name,
                         Balance = act.Balance,
-                        AccountNumber = act.AccountNumber,
+                        AccountNumber = act.Accountnumber,
                         Currency = act.Currency
                     };
 
@@ -118,7 +118,7 @@ namespace AgencyBanking.Helpers
         }
 
 
-        public static List<WalletHistoryResponse> setTransactionHistory(List<WalletTransfer> walletTransfer, string nuban)
+        public static List<WalletHistoryResponse> setTransactionHistory(List<Wallettransfer> walletTransfer, string nuban)
         {
             var transfers = new List<WalletHistoryResponse>();
 
@@ -132,28 +132,28 @@ namespace AgencyBanking.Helpers
                         Amount = trans.Amount,
                         Smid = trans.Smid,
                         Category = trans.Category,
-                        CurrencyCode = trans.CurrencyCode,
-                        ToAcct = trans.ToAcct,
-                        FromAct = trans.FromAct,
+                        CurrencyCode = trans.Currencycode,
+                        ToAcct = trans.Toacct,
+                        FromAct = trans.Fromact,
                         Remarks = trans.Remarks,
-                        TransactionDate = trans.DateCreated,
+                        TransactionDate = trans.Datecreated,
                         Status = trans.Status,
-                        ValueDate = trans.DateCreated,
-                        BalanceAfterDebit = int.Parse(trans.BalanceAfterDebit.ToString()),
-                        BalanceAfterCredit = int.Parse(trans.BalanceAfterCredit.ToString())
+                        ValueDate = trans.Datecreated,
+                        BalanceAfterDebit = int.Parse(trans.Balanceafterdebit.ToString()),
+                        BalanceAfterCredit = int.Parse(trans.Balanceaftercredit.ToString())
                     };
 
-                    if (trans.FromAct == nuban)   
+                    if (trans.Fromact == nuban)   
                     {
                         transaction.IsDebit = true;
                         transaction.DebitCredit = "1";
-                        transaction.Balance = int.Parse(trans.BalanceAfterDebit.ToString());
+                        transaction.Balance = int.Parse(trans.Balanceafterdebit.ToString());
                     }
                     else    
                     {
                         transaction.IsDebit = false;
                         transaction.DebitCredit = "2";
-                        transaction.Balance = int.Parse(trans.BalanceAfterCredit.ToString());
+                        transaction.Balance = int.Parse(trans.Balanceaftercredit.ToString());
                     }
 
                     transfers.Add(transaction);

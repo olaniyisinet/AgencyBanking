@@ -30,12 +30,7 @@ namespace AgencyBanking
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-         //  var connection = @"Server=.\SQLEXPRESS;Database=AgencyBanking;Trusted_Connection=True;ConnectRetryCount=0";
-
-           var connection = @"server=localhost;database=agencybanking;user=root;password=mysql"; 
-
-            services.AddDbContext<AgencyBankingContext>(options => options.UseMySQL(connection));
-          //  services.AddDbContext<AgencyBankingContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddEntityFrameworkNpgsql().AddDbContext<postgresContext>(opt =>  opt.UseNpgsql(Configuration.GetConnectionString("PostgresConection")));
             services.AddTransient<ApiLogService>();
 
             services.AddCors();

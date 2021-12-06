@@ -36,18 +36,18 @@ namespace AgencyBanking.Controllers
                     message = "Failed. Request body is null",
                 });
             }
-            var user = _context.WalletUsers.Where(x => x.PhoneNumber.Equals(request.Nuban) || x.UserName.Equals(request.UserName)).FirstOrDefault();
+            var user = _context.WalletUsers.Where(x => x.Phonenumber.Equals(request.Nuban) || x.Username.Equals(request.UserName)).FirstOrDefault();
 
             if (user != null)
             {
                 var otp = new Otp()
                 {
                     Otp1 = generateCode(),
-                    Email = user.EmailAddress,
-                    Phone = user.PhoneNumber,
-                    DateCreated = DateTime.UtcNow,
-                    ExpiryDate = DateTime.UtcNow.AddMinutes(5),
-                    IsUsed = false
+                    Email = user.Emailaddress,
+                    Phone = user.Phonenumber,
+                    Datecreated = DateTime.UtcNow,
+                    Expirydate = DateTime.UtcNow.AddMinutes(5),
+                    Isused = false
                 };
 
                 _context.Otps.Add(otp);
@@ -55,7 +55,7 @@ namespace AgencyBanking.Controllers
 
                 try
                 {
-                      Email.Send(user.FirstName, user.EmailAddress, "BPay OTP", "Dear " + user.FirstName + ", <br> Complete your transaction with the OTP below: <br><br>" + otp.Otp1 + "<br> <br> OTP expires in 5 minutes. <br> <br> If you did not request this, kindly contact our customer care immediately.");
+                      Email.Send(user.Firstname, user.Emailaddress, "BPay OTP", "Dear " + user.Firstname + ", <br> Complete your transaction with the OTP below: <br><br>" + otp.Otp1 + "<br> <br> OTP expires in 5 minutes. <br> <br> If you did not request this, kindly contact our customer care immediately.");
                 }catch(Exception ex)
                 {
 
@@ -108,7 +108,7 @@ namespace AgencyBanking.Controllers
                     message = "Invalid OTP",
                 });
             }
-            else if (DateTime.UtcNow > otp.ExpiryDate)
+            else if (DateTime.UtcNow > otp.Expirydate)
             {
                 return Ok(new ResponseModel2
                 {
@@ -118,7 +118,7 @@ namespace AgencyBanking.Controllers
                     message = "OTP Expired",
                 });
             }
-            else if (otp.IsUsed == true)
+            else if (otp.Isused == true)
             {
                 return Ok(new ResponseModel2
                 {
@@ -130,7 +130,7 @@ namespace AgencyBanking.Controllers
             }
             else
             {
-                otp.IsUsed = true;
+                otp.Isused = true;
 
                 _context.Entry(otp).State = EntityState.Modified;
                 _context.SaveChangesAsync();
@@ -148,7 +148,7 @@ namespace AgencyBanking.Controllers
         [HttpPost("addcustomererror")]
         public IActionResult addcustomererror(CustomerActivities request)
         {
-            var error = new CustomerError()
+            var error = new Customererror()
             {
                 Screen = request.Screen,
                 Msg = request.Msg,
