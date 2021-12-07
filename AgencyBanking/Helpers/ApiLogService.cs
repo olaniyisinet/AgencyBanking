@@ -16,7 +16,7 @@ namespace AgencyBanking.Helpers
             _db = db;
         }
 
-        public async Task Log(Apilogitem apiLogItem)
+        public async Task Log(ApiLogItem apiLogItem)
         {
             try
             {
@@ -29,7 +29,7 @@ namespace AgencyBanking.Helpers
             }
         }
 
-        public async Task<IEnumerable<Apilogitem>> Get()
+        public async Task<IEnumerable<ApiLogItem>> Get()
         {
             var items = from i in _db.ApiLogItems
                         orderby i.Id descending

@@ -17,18 +17,18 @@ namespace AgencyBanking.Models
         {
         }
 
-        public virtual DbSet<Apilogitem> ApiLogItems { get; set; }
+        public virtual DbSet<ApiLogItem> ApiLogItems { get; set; }
         public virtual DbSet<Beneficiary> Beneficiaries { get; set; }
-        public virtual DbSet<Customeraccountschema> CustomerAccountSchemas { get; set; }
-        public virtual DbSet<Customererror> CustomerErrors { get; set; }
-        public virtual DbSet<Customerprofile> CustomerProfiles { get; set; }
+        public virtual DbSet<CustomerAccountSchema> CustomerAccountSchemas { get; set; }
+        public virtual DbSet<CustomerError> CustomerErrors { get; set; }
+        public virtual DbSet<CustomerProfile> CustomerProfiles { get; set; }
         public virtual DbSet<Otp> Otps { get; set; }
         public virtual DbSet<Question> Questions { get; set; }
-        public virtual DbSet<Userdeviceinfo> UserDeviceInfos { get; set; }
-        public virtual DbSet<Userqa> UserQas { get; set; }
-        public virtual DbSet<Walletinfo> WalletInfos { get; set; }
-        public virtual DbSet<Wallettransfer> WalletTransfers { get; set; }
-        public virtual DbSet<Walletuser> WalletUsers { get; set; }
+        public virtual DbSet<UserDeviceInfo> UserDeviceInfos { get; set; }
+        public virtual DbSet<UserQa> UserQas { get; set; }
+        public virtual DbSet<WalletInfo> WalletInfos { get; set; }
+        public virtual DbSet<WalletTransfer> WalletTransfers { get; set; }
+        public virtual DbSet<WalletUser> WalletUsers { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -44,48 +44,48 @@ namespace AgencyBanking.Models
         {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
 
-            modelBuilder.Entity<Apilogitem>(entity =>
+            modelBuilder.Entity<ApiLogItem>(entity =>
             {
                 entity.ToTable("ApiLogItem");
 
                 entity.Property(e => e.Method).HasMaxLength(100);
 
-                entity.Property(e => e.Responsemillis).HasColumnType("decimal(18, 0)");
+                entity.Property(e => e.ResponseMillis).HasColumnType("decimal(18, 0)");
             });
 
             modelBuilder.Entity<Beneficiary>(entity =>
             {
                 entity.ToTable("Beneficiary");
 
-                entity.Property(e => e.Beneficiaryid).ValueGeneratedNever();
+                entity.Property(e => e.BeneficiaryId).ValueGeneratedNever();
 
-                entity.Property(e => e.Beneficiaryaccountname).HasMaxLength(50);
+                entity.Property(e => e.BeneficiaryAccountName).HasMaxLength(50);
 
-                entity.Property(e => e.Beneficiaryaccountnumber).HasMaxLength(50);
+                entity.Property(e => e.BeneficiaryAccountNumber).HasMaxLength(50);
 
-                entity.Property(e => e.Beneficiarybankcode).HasMaxLength(20);
+                entity.Property(e => e.BeneficiaryBankCode).HasMaxLength(20);
 
-                entity.Property(e => e.Beneficiarybankname).HasMaxLength(50);
+                entity.Property(e => e.BeneficiaryBankName).HasMaxLength(50);
 
-                entity.Property(e => e.Datecreated).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.DateCreated).HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.Userid).HasMaxLength(50);
+                entity.Property(e => e.UserId).HasMaxLength(50);
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Beneficiaries)
-                    .HasForeignKey(d => d.Userid)
+                    .HasForeignKey(d => d.UserId)
                     .HasConstraintName("FK_Beneficiary_WalletUsers");
             });
 
-            modelBuilder.Entity<Customeraccountschema>(entity =>
+            modelBuilder.Entity<CustomerAccountSchema>(entity =>
             {
                 entity.ToTable(" CustomerAccountSchema");
 
-                entity.Property(e => e.Accountgroup).HasMaxLength(50);
+                entity.Property(e => e.AccountGroup).HasMaxLength(50);
 
-                entity.Property(e => e.Accountnumber).HasMaxLength(50);
+                entity.Property(e => e.AccountNumber).HasMaxLength(50);
 
-                entity.Property(e => e.Accounttype).HasMaxLength(50);
+                entity.Property(e => e.AccountType).HasMaxLength(50);
 
                 entity.Property(e => e.Currency)
                     .IsRequired()
@@ -93,15 +93,15 @@ namespace AgencyBanking.Models
 
                 entity.Property(e => e.Name).HasMaxLength(50);
 
-                entity.Property(e => e.Userid).HasMaxLength(50);
+                entity.Property(e => e.UserId).HasMaxLength(50);
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.CustomerAccountSchemas)
-                    .HasForeignKey(d => d.Userid)
+                    .HasForeignKey(d => d.UserId)
                     .HasConstraintName("FK_CustomerAccount_WalletUsers");
             });
 
-            modelBuilder.Entity<Customererror>(entity =>
+            modelBuilder.Entity<CustomerError>(entity =>
             {
                 entity.HasKey(e => e.Refid);
 
@@ -112,7 +112,7 @@ namespace AgencyBanking.Models
                     .IsUnicode(false)
                     .HasColumnName("BVN");
 
-                entity.Property(e => e.Datecreated)
+                entity.Property(e => e.DateCreated)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(getdate())");
 
@@ -120,7 +120,7 @@ namespace AgencyBanking.Models
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Mobilenum)
+                entity.Property(e => e.MobileNum)
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
@@ -135,17 +135,17 @@ namespace AgencyBanking.Models
                     .IsUnicode(false);
             });
 
-            modelBuilder.Entity<Customerprofile>(entity =>
+            modelBuilder.Entity<CustomerProfile>(entity =>
             {
-                entity.HasKey(e => e.Customerid);
+                entity.HasKey(e => e.CustomerId);
 
                 entity.ToTable("CustomerProfile");
 
-                entity.Property(e => e.Customerid).HasColumnName("CustomerID");
+                entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
 
                 entity.Property(e => e.Address).HasMaxLength(50);
 
-                entity.Property(e => e.Agentcode).HasMaxLength(50);
+                entity.Property(e => e.AgentCode).HasMaxLength(50);
 
                 entity.Property(e => e.Bvn)
                     .HasMaxLength(50)
@@ -155,15 +155,15 @@ namespace AgencyBanking.Models
 
                 entity.Property(e => e.Fullname).HasMaxLength(100);
 
-                entity.Property(e => e.Lastlogin).HasMaxLength(50);
+                entity.Property(e => e.LastLogin).HasMaxLength(50);
 
-                entity.Property(e => e.Phonenumber).HasMaxLength(50);
+                entity.Property(e => e.PhoneNumber).HasMaxLength(50);
 
-                entity.Property(e => e.Pryaccount).HasMaxLength(50);
+                entity.Property(e => e.PryAccount).HasMaxLength(50);
 
-                entity.Property(e => e.Referralcode).HasMaxLength(50);
+                entity.Property(e => e.ReferralCode).HasMaxLength(50);
 
-                entity.Property(e => e.Rmdaocode)
+                entity.Property(e => e.RmdaoCode)
                     .HasMaxLength(50)
                     .HasColumnName("RMDaoCode");
 
@@ -208,13 +208,13 @@ namespace AgencyBanking.Models
             {
                 entity.ToTable("Question");
 
-                entity.Property(e => e.Questionid).ValueGeneratedNever();
+                entity.Property(e => e.QuestionId).ValueGeneratedNever();
 
-                entity.Property(e => e.Createdby)
+                entity.Property(e => e.CreatedBy)
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Datecreated)
+                entity.Property(e => e.DateCreated)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(getdate())");
 
@@ -224,19 +224,19 @@ namespace AgencyBanking.Models
                     .HasColumnName("Question");
             });
 
-            modelBuilder.Entity<Userdeviceinfo>(entity =>
+            modelBuilder.Entity<UserDeviceInfo>(entity =>
             {
-                entity.HasKey(e => e.Deviceid);
+                entity.HasKey(e => e.DeviceId);
 
                 entity.ToTable("UserDeviceInfo");
 
-                entity.Property(e => e.Deviceid).ValueGeneratedNever();
+                entity.Property(e => e.DeviceId).ValueGeneratedNever();
 
-                entity.Property(e => e.Datecreated)
+                entity.Property(e => e.DateCreated)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.Hardwareimei)
+                entity.Property(e => e.HardwareImei)
                     .HasMaxLength(1000)
                     .IsUnicode(false)
                     .HasColumnName("HardwareIMEI");
@@ -251,7 +251,7 @@ namespace AgencyBanking.Models
                     .IsUnicode(false)
                     .HasColumnName("IPAddress");
 
-                entity.Property(e => e.Iscurrent).HasDefaultValueSql("((0))");
+                entity.Property(e => e.IsCurrent).HasDefaultValueSql("((0))");
 
                 entity.Property(e => e.Make)
                     .HasMaxLength(100)
@@ -266,19 +266,19 @@ namespace AgencyBanking.Models
                     .IsUnicode(false)
                     .HasColumnName("OSVersion");
 
-                entity.Property(e => e.Userid).HasMaxLength(50);
+                entity.Property(e => e.UserId).HasMaxLength(50);
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.UserDeviceInfos)
-                    .HasForeignKey(d => d.Userid)
+                    .HasForeignKey(d => d.UserId)
                     .HasConstraintName("FK_UserDeviceInfo_WalletUsers");
             });
 
-            modelBuilder.Entity<Userqa>(entity =>
+            modelBuilder.Entity<UserQa>(entity =>
             {
                 entity.ToTable("UserQA");
 
-                entity.Property(e => e.Userqaid)
+                entity.Property(e => e.UserQaid)
                     .ValueGeneratedNever()
                     .HasColumnName("UserQAId");
 
@@ -286,24 +286,24 @@ namespace AgencyBanking.Models
                     .HasMaxLength(1000)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Datecreated)
+                entity.Property(e => e.DateCreated)
                     .HasColumnType("datetime")
                     .HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.Userid).HasMaxLength(50);
+                entity.Property(e => e.UserId).HasMaxLength(50);
 
                 entity.HasOne(d => d.Question)
                     .WithMany(p => p.UserQas)
-                    .HasForeignKey(d => d.Questionid)
+                    .HasForeignKey(d => d.QuestionId)
                     .HasConstraintName("FK_UserQA_Question");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.UserQas)
-                    .HasForeignKey(d => d.Userid)
+                    .HasForeignKey(d => d.UserId)
                     .HasConstraintName("FK_UserQA_WalletUsers");
             });
 
-            modelBuilder.Entity<Walletinfo>(entity =>
+            modelBuilder.Entity<WalletInfo>(entity =>
             {
                 entity.ToTable("WalletInfo");
 
@@ -315,9 +315,9 @@ namespace AgencyBanking.Models
 
                 entity.Property(e => e.Email).HasMaxLength(50);
 
-                entity.Property(e => e.Firstname).HasMaxLength(50);
+                entity.Property(e => e.FirstName).HasMaxLength(50);
 
-                entity.Property(e => e.Fullname).HasMaxLength(50);
+                entity.Property(e => e.FullName).HasMaxLength(50);
 
                 entity.Property(e => e.Gender).HasMaxLength(10);
 
@@ -335,17 +335,17 @@ namespace AgencyBanking.Models
                     .HasConstraintName("FK_WalletInfo_WalletUsers");
             });
 
-            modelBuilder.Entity<Wallettransfer>(entity =>
+            modelBuilder.Entity<WalletTransfer>(entity =>
             {
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
                 entity.Property(e => e.Category).HasMaxLength(50);
 
-                entity.Property(e => e.Currencycode).HasMaxLength(50);
+                entity.Property(e => e.CurrencyCode).HasMaxLength(50);
 
-                entity.Property(e => e.Datecreated).HasDefaultValueSql("(getdate())");
+                entity.Property(e => e.DateCreated).HasDefaultValueSql("(getdate())");
 
-                entity.Property(e => e.Fromact).HasMaxLength(50);
+                entity.Property(e => e.FromAct).HasMaxLength(50);
 
                 entity.Property(e => e.Remarks).HasMaxLength(100);
 
@@ -356,7 +356,7 @@ namespace AgencyBanking.Models
 
                 entity.Property(e => e.Status).HasMaxLength(50);
 
-                entity.Property(e => e.Toacct).HasMaxLength(50);
+                entity.Property(e => e.ToAcct).HasMaxLength(50);
 
                 entity.HasOne(d => d.Sm)
                     .WithMany(p => p.WalletTransfers)
@@ -365,11 +365,11 @@ namespace AgencyBanking.Models
                     .HasConstraintName("FK_WalletTransfers_WalletUsers");
             });
 
-            modelBuilder.Entity<Walletuser>(entity =>
+            modelBuilder.Entity<WalletUser>(entity =>
             {
                 entity.Property(e => e.Id).HasMaxLength(50);
 
-                entity.Property(e => e.Dateofbirth).HasColumnType("date");
+                entity.Property(e => e.DateOfBirth).HasColumnType("date");
 
                 entity.Property(e => e.Deviceimei).HasMaxLength(50);
 
@@ -379,27 +379,27 @@ namespace AgencyBanking.Models
 
                 entity.Property(e => e.Deviceos).HasMaxLength(50);
 
-                entity.Property(e => e.Emailaddress).HasMaxLength(50);
+                entity.Property(e => e.EmailAddress).HasMaxLength(50);
 
-                entity.Property(e => e.Firstname).HasMaxLength(50);
+                entity.Property(e => e.FirstName).HasMaxLength(50);
 
                 entity.Property(e => e.Gender).HasMaxLength(20);
 
-                entity.Property(e => e.Hardwareimei)
+                entity.Property(e => e.HardwareImei)
                     .HasMaxLength(50)
                     .HasColumnName("HardwareIMEI");
 
                 entity.Property(e => e.Ipaddress).HasMaxLength(50);
 
-                entity.Property(e => e.Lastname).HasMaxLength(50);
+                entity.Property(e => e.LastName).HasMaxLength(50);
 
                 entity.Property(e => e.Referralcode).HasMaxLength(50);
 
-                entity.Property(e => e.Transpin).HasMaxLength(1000);
+                entity.Property(e => e.TransPin).HasMaxLength(1000);
 
                 entity.Property(e => e.Transactionpin).HasMaxLength(10);
 
-                entity.Property(e => e.Username).HasMaxLength(50);
+                entity.Property(e => e.UserName).HasMaxLength(50);
             });
 
             OnModelCreatingPartial(modelBuilder);

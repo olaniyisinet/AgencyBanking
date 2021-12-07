@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+#nullable disable
+
 namespace AgencyBanking.Models
 {
     public partial class Otp
@@ -9,8 +11,8 @@ namespace AgencyBanking.Models
         public string Otp1 { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
-        public DateTime? Datecreated { get; set; }
-        public DateTime? Expirydate { get; set; }
-        public bool? Isused { get; set; }
+        public DateTime? DateCreated { get; set; }
+        public DateTime? ExpiryDate { get; set; }
+        public bool? IsUsed { get; set; }
     }
 }

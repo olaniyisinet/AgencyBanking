@@ -111,16 +111,16 @@ namespace AgencyBanking.Helpers
             //    queryString = $"(Truncated to 500 chars) {queryString.Substring(0, 500)}";
             //}
 
-            await _apiLogService.Log(new Apilogitem
+            await _apiLogService.Log(new ApiLogItem
             {
-                Requesttime = requestTime,
-                Responsemillis = responseMillis,
-                Statuscode = statusCode,
+                RequestTime = requestTime,
+                ResponseMillis = responseMillis,
+                StatusCode = statusCode,
                 Method = method,
                 Path = path,
-                Querystring = queryString,
-                Requestbody = requestBody,
-                Responsebody = responseBody
+                QueryString = queryString,
+                RequestBody = requestBody,
+                ResponseBody = responseBody
             });
         }
     }

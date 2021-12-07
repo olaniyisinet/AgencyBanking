@@ -37,7 +37,7 @@ namespace AgencyBanking.Controllers
         public IActionResult OnboardWalletCustomer([FromBody] CreateWalletRequest model)
         {
             // map model to entity
-            var walletuser = _mapper.Map<Walletuser>(model);
+            var walletuser = _mapper.Map<WalletUser>(model);
             walletuser.Id = Guid.NewGuid().ToString();
             try
             {

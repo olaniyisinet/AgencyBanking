@@ -1,19 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 
+#nullable disable
+
 namespace AgencyBanking.Models
 {
     public partial class Question
     {
         public Question()
         {
-            UserQas = new HashSet<Userqa>();
+            UserQas = new HashSet<UserQa>();
         }
-        public string Questionid { get; set; }
-        public string Question1 { get; set; }
-        public string Createdby { get; set; }
-        public DateTime? Datecreated { get; set; }
 
-        public virtual ICollection<Userqa> UserQas { get; set; }
+        public Guid QuestionId { get; set; }
+        public string Question1 { get; set; }
+        public string CreatedBy { get; set; }
+        public DateTime? DateCreated { get; set; }
+
+        public virtual ICollection<UserQa> UserQas { get; set; }
     }
 }

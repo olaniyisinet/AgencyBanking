@@ -24,7 +24,7 @@ namespace AgencyBanking.Controllers
         [HttpPost("VerifyTransationPin")]
         public IActionResult VerifyTransationPin(VerifyTransactionPin request)
         {
-            if (_context.WalletUsers.Any(x => x.Phonenumber.Equals(request.Nuban) && x.Transpin.Equals(Encryption.Encrypt(request.Pin))))
+            if (_context.WalletUsers.Any(x => x.PhoneNumber.Equals(request.Nuban) && x.TransPin.Equals(Encryption.Encrypt(request.Pin))))
             {
                 return Ok(new ResponseModel2
                 {
@@ -55,7 +55,7 @@ namespace AgencyBanking.Controllers
             if(user != null)
             {
                 user.Transactionpin = " ";
-                user.Transpin = Encryption.Encrypt(request.newtransactionpin);
+                user.TransPin = Encryption.Encrypt(request.newtransactionpin);
                 _context.Entry(user).State = EntityState.Modified;
                 _context.SaveChanges();
 

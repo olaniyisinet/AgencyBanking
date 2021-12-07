@@ -32,7 +32,7 @@ namespace AgencyBanking.Models
 
     public class QuestionResponse
     {
-        public string QuestionId { get; set; }
+        public Guid QuestionId { get; set; }
         public string Question { get; set; }
         public string CreatedBy { get; set; }
         public DateTime? DateCreated { get; set; }
@@ -57,7 +57,7 @@ namespace AgencyBanking.Models
         public bool? IsWalletOnly { get; set; }
         public string AgentCode { get; set; }
         public string LastLogin { get; set; }
-        public DateOnly? DateOfBirth { get; set; }
+        public DateTime? DateOfBirth { get; set; }
         public bool? IsDefaultPassword { get; set; }
         public string RmdaoCode { get; set; }
         public string Rmname { get; set; }
@@ -83,7 +83,7 @@ namespace AgencyBanking.Models
 
     public class BeneficiaryResponse
     {
-        public string BeneficiaryId { get; set; }
+        public Guid BeneficiaryId { get; set; }
         public string UserId { get; set; }
         public string BeneficiaryAccountNumber { get; set; }
         public string BeneficiaryAccountName { get; set; }
@@ -120,7 +120,7 @@ namespace AgencyBanking.Models
 
     public class WalletHistoryResponse
     {
-        public string Id { get; set; }
+        public Guid Id { get; set; }
         [JsonProperty("amt")]
         public double? Amount { get; set; }
         public string Smid { get; set; }

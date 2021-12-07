@@ -30,7 +30,13 @@ namespace AgencyBanking
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddEntityFrameworkNpgsql().AddDbContext<postgresContext>(opt =>  opt.UseNpgsql(Configuration.GetConnectionString("PostgresConection")));
+         //  var connection = @"Server=.\SQLEXPRESS;Database=AgencyBanking;Trusted_Connection=True;ConnectRetryCount=0";
+
+         //  var connection = @"Server=tcp:kmndb.database.windows.net,1433;Initial Catalog=AgencyBanking;Persist Security Info=False;User ID=kmnadmin;Password=Okot@2020KMN;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;ConnectRetryCount=0";
+            var connection = @"Server=S132-148-166-95\SQLEXPRESS;Initial Catalog=AgencyBanking;Persist Security Info=False;User ID=kmnadmin ;Password=Okot@2020KMN;TrustServerCertificate=False;Connection Timeout=30;ConnectRetryCount=0";
+
+            services.AddDbContext<AgencyBankingContext>(options => options.UseSqlServer(connection));
+            services.AddDbContext<AgencyBankingContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddTransient<ApiLogService>();
 
             services.AddCors();
