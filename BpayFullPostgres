@@ -1,0 +1,861 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 14.1
+-- Dumped by pg_dump version 14.1
+
+-- Started on 2021-12-07 15:49:59
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 3426 (class 1262 OID 13754)
+-- Name: postgres; Type: DATABASE; Schema: -; Owner: postgres
+--
+
+CREATE DATABASE postgres WITH TEMPLATE = template0 ENCODING = 'UTF8' LOCALE = 'English_United States.1252';
+
+
+ALTER DATABASE postgres OWNER TO postgres;
+
+\connect postgres
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 3427 (class 0 OID 0)
+-- Dependencies: 3426
+-- Name: DATABASE postgres; Type: COMMENT; Schema: -; Owner: postgres
+--
+
+COMMENT ON DATABASE postgres IS 'default administrative connection database';
+
+
+--
+-- TOC entry 2 (class 3079 OID 16384)
+-- Name: adminpack; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS adminpack WITH SCHEMA pg_catalog;
+
+
+--
+-- TOC entry 3428 (class 0 OID 0)
+-- Dependencies: 2
+-- Name: EXTENSION adminpack; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION adminpack IS 'administrative functions for PostgreSQL';
+
+
+--
+-- TOC entry 211 (class 1259 OID 16422)
+-- Name: apilogitem_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.apilogitem_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.apilogitem_seq OWNER TO postgres;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 212 (class 1259 OID 16423)
+-- Name: ApiLogItem; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."ApiLogItem" (
+    id integer DEFAULT nextval('public.apilogitem_seq'::regclass) NOT NULL,
+    requesttime timestamp(6) without time zone,
+    responsemillis numeric(18,0),
+    statuscode integer,
+    method character varying(100),
+    path text,
+    querystring text,
+    requestbody text,
+    responsebody text
+);
+
+
+ALTER TABLE public."ApiLogItem" OWNER TO postgres;
+
+--
+-- TOC entry 222 (class 1259 OID 16559)
+-- Name: Beneficiary; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Beneficiary" (
+    "BeneficiaryId" uuid NOT NULL,
+    "UserId" character varying(50),
+    "BeneficiaryAccountNumber" character varying(50),
+    "BeneficiaryAccountName" character varying(50),
+    "BeneficiaryBankName" character varying(50),
+    "BeneficiaryBankCode" character varying(50),
+    "DateCreated" timestamp with time zone DEFAULT now()
+);
+
+
+ALTER TABLE public."Beneficiary" OWNER TO postgres;
+
+--
+-- TOC entry 221 (class 1259 OID 16549)
+-- Name: CustomerAccountSchema; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."CustomerAccountSchema" (
+    "Id" integer NOT NULL,
+    "UserId" character varying(50) NOT NULL,
+    "AccountGroup" character varying(50),
+    "AccountType" character varying(50),
+    "Name" character varying(50),
+    "Balance" money,
+    "AccountNumber" character varying(50),
+    "Currency" character varying(10)
+);
+
+
+ALTER TABLE public."CustomerAccountSchema" OWNER TO postgres;
+
+--
+-- TOC entry 220 (class 1259 OID 16548)
+-- Name: CustomerAccountSchema_Id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public."CustomerAccountSchema" ALTER COLUMN "Id" ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public."CustomerAccountSchema_Id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 213 (class 1259 OID 16436)
+-- Name: customererror_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.customererror_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.customererror_seq OWNER TO postgres;
+
+--
+-- TOC entry 223 (class 1259 OID 16572)
+-- Name: CustomerError; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."CustomerError" (
+    refid bigint DEFAULT nextval('public.customererror_seq'::regclass) NOT NULL,
+    mobilenum character varying(50),
+    bvn character varying(50),
+    msg text,
+    stage character varying(50),
+    email character varying(50),
+    screen character varying(50),
+    datecreated timestamp with time zone DEFAULT now()
+);
+
+
+ALTER TABLE public."CustomerError" OWNER TO postgres;
+
+--
+-- TOC entry 219 (class 1259 OID 16536)
+-- Name: CustomerProfile; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."CustomerProfile" (
+    "Customerid" integer NOT NULL,
+    "SMID" character varying(50) NOT NULL,
+    "Username" character varying(50),
+    "Email" character varying(50),
+    "Address" character varying(50),
+    "BVN" character varying(50),
+    "Phonenumber" character varying(50),
+    "Fullname" character varying(100),
+    "QuestionCompleted" boolean,
+    "DeviceInfoExist" boolean,
+    "IsAgent" boolean,
+    "HasPryAccount" boolean,
+    "PryAccount" character varying(50),
+    "ReferralCode" character varying(50),
+    "IsWalletOnly" boolean,
+    "AgentCode" character varying(50),
+    "LastLogin" character varying(50),
+    "DateOfBirth" date,
+    "IsDefaultPassword" boolean,
+    "RMDaoCode" character varying(50),
+    "RMName" character varying(50),
+    "RMEmail" character varying(50),
+    "RMMobile" character varying(50)
+);
+
+
+ALTER TABLE public."CustomerProfile" OWNER TO postgres;
+
+--
+-- TOC entry 218 (class 1259 OID 16535)
+-- Name: CustomerProfile_Customerid_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public."CustomerProfile" ALTER COLUMN "Customerid" ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public."CustomerProfile_Customerid_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 225 (class 1259 OID 16582)
+-- Name: OTP; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."OTP" (
+    "Id" integer NOT NULL,
+    "OTP" character varying(50),
+    "Email" character varying(50),
+    "Phone" character varying(50),
+    "ExpiryDate" timestamp with time zone,
+    "DateCreated" timestamp with time zone DEFAULT now(),
+    "IsUsed" boolean
+);
+
+
+ALTER TABLE public."OTP" OWNER TO postgres;
+
+--
+-- TOC entry 224 (class 1259 OID 16581)
+-- Name: OTP_Id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public."OTP" ALTER COLUMN "Id" ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public."OTP_Id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 226 (class 1259 OID 16588)
+-- Name: Question; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."Question" (
+    questionid uuid NOT NULL,
+    question character varying(1000),
+    createdby character varying(100),
+    datecreated timestamp with time zone DEFAULT now()
+);
+
+
+ALTER TABLE public."Question" OWNER TO postgres;
+
+--
+-- TOC entry 227 (class 1259 OID 16596)
+-- Name: UserDeviceInfo; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."UserDeviceInfo" (
+    "DeviceId" uuid NOT NULL,
+    "UserId" character varying(50) NOT NULL,
+    "IMEI" character varying(100),
+    "OSVersion" character varying(100),
+    "Make" character varying(100),
+    "Model" character varying(100),
+    "IPAddress" character varying(1000),
+    "IsCurrent" boolean DEFAULT true,
+    "HardwareIMEI" character varying(1000),
+    "DateCreated" timestamp with time zone DEFAULT now()
+);
+
+
+ALTER TABLE public."UserDeviceInfo" OWNER TO postgres;
+
+--
+-- TOC entry 228 (class 1259 OID 16610)
+-- Name: UserQA; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."UserQA" (
+    "UserQAId" uuid NOT NULL,
+    "UserId" character varying(50) NOT NULL,
+    "QuestionId" uuid NOT NULL,
+    "Answer" character varying(1000) NOT NULL,
+    "DateCreated" timestamp with time zone DEFAULT now()
+);
+
+
+ALTER TABLE public."UserQA" OWNER TO postgres;
+
+--
+-- TOC entry 230 (class 1259 OID 16629)
+-- Name: WalletInfo; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."WalletInfo" (
+    "Id" integer NOT NULL,
+    "Customerid" character varying(50) NOT NULL,
+    "FirstName" character varying(50),
+    "LastName" character varying(50),
+    "Email" character varying(50),
+    "Mobile" character varying(50),
+    "Nuban" character varying(50),
+    "Availablebalance" money,
+    "Phone" character varying(50),
+    "Gender" character varying(50),
+    "FullName" character varying(50),
+    "CURRENCYCODE" character varying(10)
+);
+
+
+ALTER TABLE public."WalletInfo" OWNER TO postgres;
+
+--
+-- TOC entry 229 (class 1259 OID 16628)
+-- Name: WalletInfo_Id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public."WalletInfo" ALTER COLUMN "Id" ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public."WalletInfo_Id_seq"
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- TOC entry 231 (class 1259 OID 16639)
+-- Name: WalletTransfers; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."WalletTransfers" (
+    "Id" uuid NOT NULL,
+    "SMID" character varying(50) NOT NULL,
+    "Category" character varying(50),
+    "CurrencyCode" character varying(20),
+    "ToAcct" character varying(50),
+    "FromAct" character varying(50),
+    "Remarks" character varying(100),
+    "Status" character varying(50),
+    "BalanceAfterDebit" money,
+    "BalanceAfterCredit" money,
+    "Balance" money,
+    "DateCreated" timestamp with time zone DEFAULT now(),
+    "Amount" money
+);
+
+
+ALTER TABLE public."WalletTransfers" OWNER TO postgres;
+
+--
+-- TOC entry 217 (class 1259 OID 16528)
+-- Name: WalletUsers; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public."WalletUsers" (
+    id character varying(50) NOT NULL,
+    firstname character varying(50),
+    lastname character varying(50),
+    username character varying(50),
+    passwordhash bytea,
+    passwordsalt bytea,
+    emailaddress character varying(50),
+    phonenumber text,
+    gender character varying(20),
+    dateofbirth date,
+    transactionpin character varying(10),
+    deviceimei character varying(50),
+    hardwareimei character varying(50),
+    deviceos character varying(50),
+    devicemake character varying(50),
+    devicemodel character varying(50),
+    ipaddress character varying(50),
+    referralcode character varying(50),
+    transpin character varying(1000)
+);
+
+
+ALTER TABLE public."WalletUsers" OWNER TO postgres;
+
+--
+-- TOC entry 210 (class 1259 OID 16415)
+-- Name: customeraccountschema_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.customeraccountschema_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.customeraccountschema_seq OWNER TO postgres;
+
+--
+-- TOC entry 214 (class 1259 OID 16445)
+-- Name: customerprofile_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.customerprofile_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.customerprofile_seq OWNER TO postgres;
+
+--
+-- TOC entry 215 (class 1259 OID 16454)
+-- Name: otp_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.otp_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.otp_seq OWNER TO postgres;
+
+--
+-- TOC entry 216 (class 1259 OID 16482)
+-- Name: walletinfo_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.walletinfo_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.walletinfo_seq OWNER TO postgres;
+
+--
+-- TOC entry 3401 (class 0 OID 16423)
+-- Dependencies: 212
+-- Data for Name: ApiLogItem; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO public."ApiLogItem" (id, requesttime, responsemillis, statuscode, method, path, querystring, requestbody, responsebody) VALUES (1, '2021-12-07 14:46:55.733682', 14315, 200, 'POST', '/api/OnboardWalletCustomer', '', '{"firstName":"ola","lastName":"Niyi","userName":"olaniyi","password":"12345678","emailAddress":"olaniyiolatunji@gmail.com","phoneNumber":"08177654960","gender":"Male","dateOfBirth":"2000-12-07T14:42:57.943Z","transactionpin":"1234","deviceimei":"string","hardwareImei":"string","deviceos":"string","devicemake":"string","devicemodel":"string","ipaddress":"string","referralcode":"string"}', '{"status":"true","code":"200","message":"User registered successfully","Data":{"AccountSummary":{"Accounts":null,"Beneficiaries":null},"ProfileInfo":{"CustomerId":1,"Smid":"6d1f7e9f-6587-4075-83ce-6ccbf675f577","Username":"olaniyi","Email":"olaniyiolatunji@gmail.com","Address":"olaniyiolatunji@gmail.com","Bvn":"","PhoneNumber":"08177654960","Fullname":"ola Niyi","QuestionCompleted":false,"DeviceInfoExist":false,"IsAgent":false,"HasPryAccount":false,"PryAccount":"","ReferralCode":"","IsWalletOnly":true,"AgentCode":"","LastLogin":"07-Dec-21 2:47:04 PM","DateOfBirth":"2000-12-07T14:42:57.943Z","IsDefaultPassword":false,"RmdaoCode":"","Rmname":"","Rmemail":"","Rmmobile":""},"WalletInfo":{"Id":1,"Customerid":"6d1f7e9f-6587-4075-83ce-6ccbf675f577","FirstName":"ola","Lastname":"Niyi","Email":"olaniyiolatunji@gmail.com","Mobile":"08177654960","Nuban":"08177654960","Availablebalance":10000.0,"Phone":"08177654960","Gender":"Male","FullName":"ola Niyi","Currencycode":"NGN"}}}');
+
+
+--
+-- TOC entry 3411 (class 0 OID 16559)
+-- Dependencies: 222
+-- Data for Name: Beneficiary; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 3410 (class 0 OID 16549)
+-- Dependencies: 221
+-- Data for Name: CustomerAccountSchema; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 3412 (class 0 OID 16572)
+-- Dependencies: 223
+-- Data for Name: CustomerError; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 3408 (class 0 OID 16536)
+-- Dependencies: 219
+-- Data for Name: CustomerProfile; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO public."CustomerProfile" ("Customerid", "SMID", "Username", "Email", "Address", "BVN", "Phonenumber", "Fullname", "QuestionCompleted", "DeviceInfoExist", "IsAgent", "HasPryAccount", "PryAccount", "ReferralCode", "IsWalletOnly", "AgentCode", "LastLogin", "DateOfBirth", "IsDefaultPassword", "RMDaoCode", "RMName", "RMEmail", "RMMobile") OVERRIDING SYSTEM VALUE VALUES (1, '6d1f7e9f-6587-4075-83ce-6ccbf675f577', 'olaniyi', 'olaniyiolatunji@gmail.com', 'olaniyiolatunji@gmail.com', '', '08177654960', 'ola Niyi', false, false, false, false, '', '', true, '', '07-Dec-21 2:47:04 PM', '2000-12-07', false, '', '', '', '');
+
+
+--
+-- TOC entry 3414 (class 0 OID 16582)
+-- Dependencies: 225
+-- Data for Name: OTP; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 3415 (class 0 OID 16588)
+-- Dependencies: 226
+-- Data for Name: Question; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO public."Question" (questionid, question, createdby, datecreated) VALUES ('00000000-0000-0000-0000-000000000000', 'What is the model of your first car?', 'Olaniyi', '2021-12-07 12:05:47.727273+01');
+INSERT INTO public."Question" (questionid, question, createdby, datecreated) VALUES ('3fa85f64-5717-4562-b3fc-2c963f66afa6', 'What is the model of your first car?', 'Olaniyi', '2021-12-07 12:11:29.94075+01');
+INSERT INTO public."Question" (questionid, question, createdby, datecreated) VALUES ('3fa85f64-5717-4562-b3fc-2c963f66afa7', 'Where did you meet your spouse?', 'Olaniyi', '2021-12-07 12:12:20.54867+01');
+INSERT INTO public."Question" (questionid, question, createdby, datecreated) VALUES ('3fa85f64-5717-4562-b3fc-2c963f66afa8', 'What year did you graduate university?', 'Olaniyi', '2021-12-07 12:12:20.54867+01');
+
+
+--
+-- TOC entry 3416 (class 0 OID 16596)
+-- Dependencies: 227
+-- Data for Name: UserDeviceInfo; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO public."UserDeviceInfo" ("DeviceId", "UserId", "IMEI", "OSVersion", "Make", "Model", "IPAddress", "IsCurrent", "HardwareIMEI", "DateCreated") VALUES ('d02945ce-35ca-413f-82a0-574cb74060bd', '6d1f7e9f-6587-4075-83ce-6ccbf675f577', 'string', 'string', 'string', 'string', 'string', true, 'string', '2021-12-07 15:47:04.555379+01');
+
+
+--
+-- TOC entry 3417 (class 0 OID 16610)
+-- Dependencies: 228
+-- Data for Name: UserQA; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 3419 (class 0 OID 16629)
+-- Dependencies: 230
+-- Data for Name: WalletInfo; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO public."WalletInfo" ("Id", "Customerid", "FirstName", "LastName", "Email", "Mobile", "Nuban", "Availablebalance", "Phone", "Gender", "FullName", "CURRENCYCODE") OVERRIDING SYSTEM VALUE VALUES (1, '6d1f7e9f-6587-4075-83ce-6ccbf675f577', 'ola', 'Niyi', 'olaniyiolatunji@gmail.com', '08177654960', '08177654960', '$10,000.00', '08177654960', 'Male', 'ola Niyi', 'NGN');
+
+
+--
+-- TOC entry 3420 (class 0 OID 16639)
+-- Dependencies: 231
+-- Data for Name: WalletTransfers; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+
+
+--
+-- TOC entry 3406 (class 0 OID 16528)
+-- Dependencies: 217
+-- Data for Name: WalletUsers; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+INSERT INTO public."WalletUsers" (id, firstname, lastname, username, passwordhash, passwordsalt, emailaddress, phonenumber, gender, dateofbirth, transactionpin, deviceimei, hardwareimei, deviceos, devicemake, devicemodel, ipaddress, referralcode, transpin) VALUES ('6d1f7e9f-6587-4075-83ce-6ccbf675f577', 'ola', 'Niyi', 'olaniyi', '\xa0c2a3348db133e5add735378c46135059bd716bb4cf867e1ac77fcc4c03d77bd88cd4c7d90e10abd8d750159e30a034fb6da5d973747a42bbd6b2a36992e4f5', '\x7ff361a68d6db37028efd274171b3950a5925b41b271cc0e935485ae1d54c28c604bf2e97751b85811a6bb0c747ca82c58e4b4902d279d6ec298e8beca21a55e9a0566b70038c953c212672fa820149e9d00fa54f0595f5cf2641ba1069b764bb2691fae6c85a67dfb58a195c6516353032538a08192f35decb82a2c2ec7d4a3', 'olaniyiolatunji@gmail.com', '08177654960', 'Male', '2000-12-07', '', 'string', 'string', 'string', 'string', 'string', 'string', 'string', 'VEnAAhgcsJo=');
+
+
+--
+-- TOC entry 3429 (class 0 OID 0)
+-- Dependencies: 220
+-- Name: CustomerAccountSchema_Id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public."CustomerAccountSchema_Id_seq"', 1, false);
+
+
+--
+-- TOC entry 3430 (class 0 OID 0)
+-- Dependencies: 218
+-- Name: CustomerProfile_Customerid_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public."CustomerProfile_Customerid_seq"', 1, true);
+
+
+--
+-- TOC entry 3431 (class 0 OID 0)
+-- Dependencies: 224
+-- Name: OTP_Id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public."OTP_Id_seq"', 1, false);
+
+
+--
+-- TOC entry 3432 (class 0 OID 0)
+-- Dependencies: 229
+-- Name: WalletInfo_Id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public."WalletInfo_Id_seq"', 1, true);
+
+
+--
+-- TOC entry 3433 (class 0 OID 0)
+-- Dependencies: 211
+-- Name: apilogitem_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.apilogitem_seq', 1, true);
+
+
+--
+-- TOC entry 3434 (class 0 OID 0)
+-- Dependencies: 210
+-- Name: customeraccountschema_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.customeraccountschema_seq', 1, false);
+
+
+--
+-- TOC entry 3435 (class 0 OID 0)
+-- Dependencies: 213
+-- Name: customererror_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.customererror_seq', 1, false);
+
+
+--
+-- TOC entry 3436 (class 0 OID 0)
+-- Dependencies: 214
+-- Name: customerprofile_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.customerprofile_seq', 1, false);
+
+
+--
+-- TOC entry 3437 (class 0 OID 0)
+-- Dependencies: 215
+-- Name: otp_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.otp_seq', 1, false);
+
+
+--
+-- TOC entry 3438 (class 0 OID 0)
+-- Dependencies: 216
+-- Name: walletinfo_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.walletinfo_seq', 1, false);
+
+
+--
+-- TOC entry 3237 (class 2606 OID 16564)
+-- Name: Beneficiary Beneficiary_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Beneficiary"
+    ADD CONSTRAINT "Beneficiary_pkey" PRIMARY KEY ("BeneficiaryId");
+
+
+--
+-- TOC entry 3235 (class 2606 OID 16553)
+-- Name: CustomerAccountSchema CustomerAccountSchema_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."CustomerAccountSchema"
+    ADD CONSTRAINT "CustomerAccountSchema_pkey" PRIMARY KEY ("Id");
+
+
+--
+-- TOC entry 3233 (class 2606 OID 16542)
+-- Name: CustomerProfile CustomerProfile_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."CustomerProfile"
+    ADD CONSTRAINT "CustomerProfile_pkey" PRIMARY KEY ("Customerid");
+
+
+--
+-- TOC entry 3241 (class 2606 OID 16587)
+-- Name: OTP OTP_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."OTP"
+    ADD CONSTRAINT "OTP_pkey" PRIMARY KEY ("Id");
+
+
+--
+-- TOC entry 3245 (class 2606 OID 16604)
+-- Name: UserDeviceInfo UserDeviceInfo_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."UserDeviceInfo"
+    ADD CONSTRAINT "UserDeviceInfo_pkey" PRIMARY KEY ("DeviceId");
+
+
+--
+-- TOC entry 3247 (class 2606 OID 16617)
+-- Name: UserQA UserQA_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."UserQA"
+    ADD CONSTRAINT "UserQA_pkey" PRIMARY KEY ("UserQAId");
+
+
+--
+-- TOC entry 3249 (class 2606 OID 16633)
+-- Name: WalletInfo WalletInfo_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."WalletInfo"
+    ADD CONSTRAINT "WalletInfo_pkey" PRIMARY KEY ("Id");
+
+
+--
+-- TOC entry 3251 (class 2606 OID 16644)
+-- Name: WalletTransfers WalletTransfers_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."WalletTransfers"
+    ADD CONSTRAINT "WalletTransfers_pkey" PRIMARY KEY ("Id");
+
+
+--
+-- TOC entry 3229 (class 2606 OID 16430)
+-- Name: ApiLogItem pk_apilogitem; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."ApiLogItem"
+    ADD CONSTRAINT pk_apilogitem PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3239 (class 2606 OID 16580)
+-- Name: CustomerError pk_customererror; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."CustomerError"
+    ADD CONSTRAINT pk_customererror PRIMARY KEY (refid);
+
+
+--
+-- TOC entry 3243 (class 2606 OID 16595)
+-- Name: Question pk_question; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Question"
+    ADD CONSTRAINT pk_question PRIMARY KEY (questionid);
+
+
+--
+-- TOC entry 3231 (class 2606 OID 16534)
+-- Name: WalletUsers pk_walletusers; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."WalletUsers"
+    ADD CONSTRAINT pk_walletusers PRIMARY KEY (id);
+
+
+--
+-- TOC entry 3257 (class 2606 OID 16623)
+-- Name: UserQA FK_Question; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."UserQA"
+    ADD CONSTRAINT "FK_Question" FOREIGN KEY ("QuestionId") REFERENCES public."Question"(questionid);
+
+
+--
+-- TOC entry 3259 (class 2606 OID 16645)
+-- Name: WalletTransfers FK_User; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."WalletTransfers"
+    ADD CONSTRAINT "FK_User" FOREIGN KEY ("SMID") REFERENCES public."WalletUsers"(id);
+
+
+--
+-- TOC entry 3256 (class 2606 OID 16618)
+-- Name: UserQA FK_users; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."UserQA"
+    ADD CONSTRAINT "FK_users" FOREIGN KEY ("UserId") REFERENCES public."WalletUsers"(id);
+
+
+--
+-- TOC entry 3258 (class 2606 OID 16634)
+-- Name: WalletInfo FK_users; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."WalletInfo"
+    ADD CONSTRAINT "FK_users" FOREIGN KEY ("Customerid") REFERENCES public."WalletUsers"(id);
+
+
+--
+-- TOC entry 3255 (class 2606 OID 16605)
+-- Name: UserDeviceInfo FK_walletuser; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."UserDeviceInfo"
+    ADD CONSTRAINT "FK_walletuser" FOREIGN KEY ("UserId") REFERENCES public."WalletUsers"(id);
+
+
+--
+-- TOC entry 3252 (class 2606 OID 16543)
+-- Name: CustomerProfile SMID; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."CustomerProfile"
+    ADD CONSTRAINT "SMID" FOREIGN KEY ("SMID") REFERENCES public."WalletUsers"(id);
+
+
+--
+-- TOC entry 3254 (class 2606 OID 16565)
+-- Name: Beneficiary userIdFK; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."Beneficiary"
+    ADD CONSTRAINT "userIdFK" FOREIGN KEY ("UserId") REFERENCES public."WalletUsers"(id);
+
+
+--
+-- TOC entry 3253 (class 2606 OID 16554)
+-- Name: CustomerAccountSchema wallteruserFK; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public."CustomerAccountSchema"
+    ADD CONSTRAINT "wallteruserFK" FOREIGN KEY ("UserId") REFERENCES public."WalletUsers"(id);
+
+
+-- Completed on 2021-12-07 15:49:59
+
+--
+-- PostgreSQL database dump complete
+--
+

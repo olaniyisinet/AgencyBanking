@@ -1,1 +1,4 @@
  Scaffold-DbContext "Server=tcp:kmndatabase.database.windows.net,1433;Initial Catalog=AgencyBanking;Persist Security Info=False;User ID=kmnadmin;Password=Okot@2020KMN;Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -force
+
+
+Scaffold-DbContext “Host=localhost;Database=postgres;Username=postgres;Password=postgres” Npgsql.EntityFrameworkCore.PostgreSQL -o Models -f
