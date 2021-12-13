@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "g8yjGS8gMYBUs8YdIjTjJbhWvhPuunx4CWZy4esE4yg=",
+  "Source": "AgencyBanking",
+  "BasePath": "_content/AgencyBanking",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
