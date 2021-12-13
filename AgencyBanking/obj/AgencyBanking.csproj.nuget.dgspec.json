@@ -1,21 +1,28 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\kmnadmin\\Documents\\GitHub\\AgencyBanking\\AgencyBanking\\AgencyBanking.csproj": {}
+    "C:\\Users\\olani\\OneDrive\\Documents\\GitHub\\AgencyBanking\\AgencyBanking\\AgencyBanking.csproj": {}
   },
   "projects": {
-    "C:\\Users\\kmnadmin\\Documents\\GitHub\\AgencyBanking\\AgencyBanking\\AgencyBanking.csproj": {
+    "C:\\Users\\olani\\OneDrive\\Documents\\GitHub\\AgencyBanking\\AgencyBanking\\AgencyBanking.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\kmnadmin\\Documents\\GitHub\\AgencyBanking\\AgencyBanking\\AgencyBanking.csproj",
+        "projectUniqueName": "C:\\Users\\olani\\OneDrive\\Documents\\GitHub\\AgencyBanking\\AgencyBanking\\AgencyBanking.csproj",
         "projectName": "AgencyBanking",
-        "projectPath": "C:\\Users\\kmnadmin\\Documents\\GitHub\\AgencyBanking\\AgencyBanking\\AgencyBanking.csproj",
-        "packagesPath": "C:\\Users\\kmnadmin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\kmnadmin\\Documents\\GitHub\\AgencyBanking\\AgencyBanking\\obj\\",
+        "projectPath": "C:\\Users\\olani\\OneDrive\\Documents\\GitHub\\AgencyBanking\\AgencyBanking\\AgencyBanking.csproj",
+        "packagesPath": "C:\\Users\\olani\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\olani\\OneDrive\\Documents\\GitHub\\AgencyBanking\\AgencyBanking\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
         "configFilePaths": [
-          "C:\\Users\\kmnadmin\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\olani\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net5.0"
@@ -117,7 +124,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.201\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }
